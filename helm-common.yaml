@@ -1,9 +1,9 @@
-nameOverride: microservices-template
+nameOverride: canvas-course-finder
 
 namespace: ua-vpit--enterprise-systems--lms
 
 image:
-  repository: registry.docker.iu.edu/lms/microservices-template
+  repository: registry.docker.iu.edu/lms/canvas-course-finder
   tag: unstable
   pullPolicy: Always
 
