@@ -12,5 +12,5 @@ env:
 ingress:
   enabled: true
   hosts:
-    - host: "canvas-course-finder-snd.apps-snd.iu.edu"
+    - host: "course-attribute-editor-snd.apps-snd.iu.edu"
       paths: []

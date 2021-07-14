@@ -2,7 +2,7 @@ namespace: default
 bootstrapSecret: "properties-2021-05-10"
 
 image:
-  repository: localhost:5000/canvas-course-finder
+  repository: localhost:5000/course-attribute-editor
   pullPolicy: Never
   tag: unstable
 

@@ -1,4 +1,4 @@
-package edu.iu.uits.lms.canvascoursefinder.config;
+package edu.iu.uits.lms.courseattributeeditor.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

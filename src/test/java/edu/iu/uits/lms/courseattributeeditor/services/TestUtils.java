@@ -1,4 +1,4 @@
-package edu.iu.uits.lms.canvascoursefinder.services;
+package edu.iu.uits.lms.courseattributeeditor.services;
 
 public class TestUtils {
     public static String defaultUseragent() {

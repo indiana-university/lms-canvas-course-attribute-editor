@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html lang="en-US"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Course Attribute Editor - Edit</title>
+</head>
+<body>
+    <div layout:fragment="content">
+            <!-- main page -->
+            <main>
+                <!-- alerts section -->
+                <div th:if="not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger rvt-m-top-sm" role="alertdialog" aria-labelledby="error-alert-title">
+                    <h1 class="rvt-alert__title" id="error-alert-title">There is a problem</h1>
+                    <ul class="rvt-plain-list">
+                        <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
+                            <a th:if="${error == 'course-sis-id'}" href="#course-sis-id">The <strong>Course SIS ID</strong> is already in use in Canvas</a>
+                            <a th:if="${error != 'course-sis-id'}" th:href="@{|#${error}|}">The <strong>Section SIS ID</strong> is already in use in Canvas</a>
+                        </li>
+                    </ul>
+                </div>
+                <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger rvt-m-top-sm" role="alertdialog" aria-labelledby="error-alert-title">
+                    <h1 class="rvt-alert__title" id="error-alert-title">Error</h1>
+                    <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
+                </div>
+                <!-- rest of main content -->
+                <h1 class="rvt-ts-32 rvt-p-top-sm rvt-text-bold">Edit Course</h1>
+                <div class="rvt-p-top-sm">
+                    <span>Fields containing official SIS IDs cannot be edited.</span>
+                </div>
+                <form id="form-edit-course" th:action="@{|/app/submit/${searchBox}|}" method="post">
+                    <fieldset>
+                        <legend class="rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Course Information</legend>
+                        <label for="course-title">Course Title</label>
+                        <input type="text" id="course-title" name="course-title" th:value="${overrideCourseTitle} ? ${overrideCourseTitle} : ${course.name}" />
+                        <label for="course-code" class="rvt-m-top-md">Course Code</label>
+                        <input type="text" id="course-code" name="course-code" th:value="${course.courseCode}" disabled aria-disabled="true" />
+                        <label for="course-sis-id" class="rvt-m-top-md">Course SIS ID</label>
+                        <input type="text" id="course-sis-id" name="course-sis-id" th:value="${overrideSisCourseId} ? ${overrideSisCourseId} : ${course.sisCourseId}"
+                               th:classappend="${courseSisIdError} ? 'rvt-validation-danger'" th:aria-describedby="${courseSisIdError} ? 'course-sis-id-message'"
+                               th:aria-invalid="${courseSisIdError} ? true" />
+                        <div th:if="${courseSisIdError}" class="rvt-inline-alert rvt-inline-alert--danger">
+                            <span class="rvt-inline-alert__icon">
+                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                    <g fill="currentColor">
+                                        <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z" />
+                                        <path d="M10.83,5.17a1,1,0,0,0-1.41,0L8,6.59,6.59,5.17A1,1,0,0,0,5.17,6.59L6.59,8,5.17,9.41a1,1,0,1,0,1.41,1.41L8,9.41l1.41,1.41a1,1,0,0,0,1.41-1.41L9.41,8l1.41-1.41A1,1,0,0,0,10.83,5.17Z"/>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span class="rvt-inline-alert__message" id="course-sis-id-message">
+                                The <strong>Course SIS ID</strong> is already in use in Canvas.
+                            </span>
+                        </div>
+                    </fieldset>
+                    <table>
+                        <fieldset>
+                            <legend class="rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Section Information</legend>
+                            <thead>
+                            <tr>
+                                <th scope="col" id="section-name-header">Section Name</th>
+                                <th scope="col" id="section-sis-id-header">Section SIS ID</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="s : ${sections}">
+                                <th>
+                                    <input type="text" th:id="@{|section-name-${s.section.id}|}" th:name="@{|section-name-${s.section.id}|}" th:value="${s.section.name}"
+                                           aria-labelledby="section-name-header" th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}" />
+                                </th>
+                                <td>
+                                    <input type="text" th:id="@{|section-sis-id-${s.section.id}|}" th:name="@{|section-sis-id-${s.section.id}|}"
+                                           th:value="${s.section.sisSectionId}" aria-labelledby="section-sis-id-header"
+                                           th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}"
+                                           th:classappend="${s.alreadyInCanvas} ? 'rvt-validation-danger'"
+                                           th:aria-describedby="${s.alreadyInCanvas} ? @{|section-sis-id-${s.section.id}-message|}"
+                                           th:aria-invalid="${s.alreadyInCanvas} ? true" />
+                                    <div th:if="${s.alreadyInCanvas}" class="rvt-inline-alert rvt-inline-alert--danger">
+                                        <span class="rvt-inline-alert__icon">
+                                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                <g fill="currentColor">
+                                                    <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z" />
+                                                    <path d="M10.83,5.17a1,1,0,0,0-1.41,0L8,6.59,6.59,5.17A1,1,0,0,0,5.17,6.59L6.59,8,5.17,9.41a1,1,0,1,0,1.41,1.41L8,9.41l1.41,1.41a1,1,0,0,0,1.41-1.41L9.41,8l1.41-1.41A1,1,0,0,0,10.83,5.17Z"/>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                        <span class="rvt-inline-alert__message" th:id="@{|section-sis-id-${s.section.id}-message|}">
+                                            The <strong>Section SIS ID</strong> is already in use in Canvas.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </fieldset>
+                    </table>
+                    <div class="rvt-m-top-md">
+                        <input id="action" name="action" value="" type="hidden" />
+                        <button id="saveButton" class="rvt-button rvt-m-right-xs">Save</button>
+                        <button class="rvt-button rvt-button--secondary" value="cancel">Cancel</button>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

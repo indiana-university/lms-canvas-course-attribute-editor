@@ -1,4 +1,4 @@
-package edu.iu.uits.lms.canvascoursefinder.controller;
+package edu.iu.uits.lms.courseattributeeditor.controller;
 
 import canvas.helpers.CanvasConstants;
 import edu.iu.uits.lms.lti.LTIConstants;
@@ -24,14 +24,13 @@ import java.util.Map;
 @Controller
 @RequestMapping({"/lti"})
 @Slf4j
-public class CanvasCourseFinderLtiController extends LtiController {
+public class CourseAttributeEditorLtiController extends LtiController {
 
     private boolean openLaunchUrlInNewWindow = false;
 
     @Override
     protected String getLaunchUrl(Map<String, String> launchParams) {
-        String courseId = launchParams.get(CUSTOM_CANVAS_COURSE_ID);
-        return "/app/index/" + courseId;
+        return "/app/index/";
     }
 
     @Override
@@ -76,7 +75,7 @@ public class CanvasCourseFinderLtiController extends LtiController {
 
     @Override
     protected String getToolContext() {
-        return "canvas-course-finder";
+        return "lms_lti_course_attribute_editor";
     }
 
     @Override

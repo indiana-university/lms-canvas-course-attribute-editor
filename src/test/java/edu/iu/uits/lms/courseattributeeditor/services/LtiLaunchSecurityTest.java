@@ -1,7 +1,7 @@
-package edu.iu.uits.lms.canvascoursefinder.services;
+package edu.iu.uits.lms.courseattributeeditor.services;
 
-import edu.iu.uits.lms.canvascoursefinder.config.ToolConfig;
-import edu.iu.uits.lms.canvascoursefinder.controller.CanvasCourseFinderLtiController;
+import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
+import edu.iu.uits.lms.courseattributeeditor.controller.CourseAttributeEditorLtiController;
 import lti.client.generated.api.LtiAuthApi;
 import lti.client.generated.api.LtiPropsApi;
 import lti.client.generated.model.LmsLtiAuthz;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(CanvasCourseFinderLtiController.class)
+@WebMvcTest(CourseAttributeEditorLtiController.class)
 @Import(ToolConfig.class)
 @ActiveProfiles("none")
 public class LtiLaunchSecurityTest {
