@@ -85,33 +85,4 @@ public class CourseAttributeEditorLtiController extends LtiController {
 
         return LAUNCH_MODE.FORWARD;
     }
-
-    /**
-     * Given a list of user roles, return the internal equivalent role
-     * @param userRoles
-     * @param instructorRoles
-     * @return
-     */
-    @Override
-    protected String returnEquivalentAuthority(List<String> userRoles, List<String> instructorRoles) {
-        for (String instructorRole : instructorRoles) {
-            if (userRoles.contains(instructorRole)) {
-                return LTIConstants.INSTRUCTOR_AUTHORITY;
-            }
-        }
-
-        if (userRoles.contains(CanvasConstants.TA_ROLE)) {
-            return LTIConstants.TA_AUTHORITY;
-        }
-
-        if (userRoles.contains(CanvasConstants.DESIGNER_ROLE)) {
-            return LTIConstants.DESIGNER_AUTHORITY;
-        }
-
-        if (userRoles.contains(CanvasConstants.OBSERVER_ROLE)) {
-            return LTIConstants.OBSERVER_AUTHORITY;
-        }
-
-        return LTIConstants.STUDENT_AUTHORITY;
-    }
 }

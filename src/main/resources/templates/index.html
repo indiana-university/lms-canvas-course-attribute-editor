@@ -25,8 +25,8 @@
                 <div class="rvt-p-top-sm">
                     <span th:if="${displayNotFound}" th:text="@{|Canvas Course ID &quot;${searchBox}&quot; does not exist.|}">Canvas Course ID "purposelyBadQuery" does not exist.</span>
                     <span th:if="!${editable} and ${courseFound}">The course and its section(s) were provisioned by SIS. No values are editable.</span>
-                    <form th:action="@{|/app/edit/${searchBox}|}" method="post">
-                        <button th:if="${editable} and ${courseFound}" type="submit" class="rvt-button rvt-m-right-xs">Edit</button>
+                    <form th:if="${editable} and ${courseFound}" th:action="@{|/app/edit/${searchBox}|}" method="post">
+                        <button type="submit" class="rvt-button rvt-m-right-xs">Edit</button>
                     </form>
                 </div>
 

@@ -5,6 +5,7 @@ import canvas.client.generated.api.SectionsApi;
 import canvas.client.generated.model.Course;
 import canvas.client.generated.model.Section;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
+import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.controller.LtiAuthenticationTokenAwareController;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationProvider;
 import iuonly.client.generated.api.SudsApi;
@@ -16,6 +17,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -82,15 +84,9 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
                // we have a match, so this course is not editable
                model.addAttribute("editable", false);
             } else {
-               SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
                // check archive table
-               if (sudsCourseArchive != null) {
-                  // we have a match, so this course is not editable
-                  model.addAttribute("editable", false);
-               } else {
-                  // Found in Canvas, but not in Suds or archive table, so it is editable
-                  model.addAttribute("editable", true);
-               }
+               SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
+               model.addAttribute("editable", sudsCourseArchive == null);
             }
          } else {
             // this does not have a sis course id, therefore it is editable
@@ -161,7 +157,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
                   section.setName(swsc.getSection().getName());
 
                   sectionWithSISCheck.setAlreadyInCanvas(swsc.isAlreadyInCanvas());
-                  sectionWithSISCheck.setDupe(swsc.isDupe());
+                  break;
                }
             }
          }
@@ -184,17 +180,21 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       return new ModelAndView("edit");
    }
 
+   @PostMapping(value = "/submit/{editId}", params = "action=cancel")
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
+   public ModelAndView cancel(Model model, HttpServletRequest request, @PathVariable("editId") String editId) {
+      log.debug("in /cancel");
+      getTokenWithoutContext();
+      // cancel button. Send back to results screen w/o changes
+      return find(model, request, editId);
+   }
+
    @RequestMapping("/submit/{editId}")
    @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
    public ModelAndView submit(Model model, HttpServletRequest request, @PathVariable("editId") String editId,
-                              @RequestParam Map<String, String> params, @RequestParam String action) {
+                              @RequestParam Map<String, String> params) {
       log.debug("in /submit");
       getTokenWithoutContext();
-
-      // cancel button. Send back to results screen w/o changes
-      if ("cancel".equals(action)) {
-         return find(model, request, editId);
-      }
 
       String courseTitle = params.get("course-title");
       String sisCourseId = params.get("course-sis-id");
@@ -216,7 +216,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          }
 
          if (newCourseSisId) {
-            Course existingCourseLookup = coursesApi.getCourseWithSisId(sisCourseId, "sis_course_id");
+            Course existingCourseLookup = coursesApi.getCourse("sis_course_id:" + sisCourseId);
 
             if (existingCourseLookup != null) {
                errors = true;
@@ -252,7 +252,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          if (readyToUpdateSection) {
             // if it's an empty string, don't bother with error checking
             if (!sisSectionId.equals("")) {
-               Section section = sectionsApi.getSectionWithSisId(sisSectionId, "sis_section_id");
+               Section section = sectionsApi.getSection("sis_section_id:" + sisSectionId);
 
                if (section != null) {
                   // found something, let's make sure it didn't find itself before declaring it already in use
@@ -280,9 +280,11 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          }
       }
 
+      // add section overrides, if needed for error pages
+      model.addAttribute("sectionOverride", sections);
+
       // any already in use errors?
       if (errors) {
-         model.addAttribute("sectionOverride", sections);
          model.addAttribute("alreadyInUseList", alreadyInUseList);
          return edit(editId, model, request);
       }
@@ -292,7 +294,6 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       // if this failed, return
       if (course == null) {
-         model.addAttribute("sectionOverride", sections);
          model.addAttribute("canvasError", true);
          return edit(editId, model, request);
       }
@@ -303,7 +304,6 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
          // if this failed, go ahead and return
          if (section == null) {
-            model.addAttribute("sectionOverride", sections);
             model.addAttribute("canvasError", true);
             return edit(editId, model, request);
          }
@@ -320,6 +320,5 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       Section section;
       boolean isSisProvisioned;
       boolean isAlreadyInCanvas;
-      boolean isDupe;
    }
 }
