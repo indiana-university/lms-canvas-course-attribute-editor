@@ -45,7 +45,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    private SudsApi sudsApi;
 
    @RequestMapping("/index")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView index(Model model, HttpServletRequest request) {
       log.debug("in /index");
       getTokenWithoutContext();
@@ -56,7 +56,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    }
 
    @RequestMapping("/find")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView find(Model model, HttpServletRequest request, @RequestParam("searchBox") String searchBox) {
       log.debug("in /find");
       getTokenWithoutContext();
@@ -108,13 +108,13 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
     * @return
     */
    @RequestMapping("/find/{searchBox}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView returnTofind(Model model, HttpServletRequest request, @PathVariable("searchBox") String searchBox) {
       return find(model, request, searchBox);
    }
 
    @RequestMapping("/edit/{editId}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView edit(@PathVariable("editId") String editId, Model model, HttpServletRequest request) {
       log.debug("in /edit");
       getTokenWithoutContext();
@@ -190,7 +190,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    }
 
    @RequestMapping("/submit/{editId}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView submit(Model model, HttpServletRequest request, @PathVariable("editId") String editId,
                               @RequestParam Map<String, String> params) {
       log.debug("in /submit");

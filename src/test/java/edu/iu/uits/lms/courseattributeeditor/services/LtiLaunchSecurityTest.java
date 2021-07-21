@@ -2,6 +2,7 @@ package edu.iu.uits.lms.courseattributeeditor.services;
 
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.controller.CourseAttributeEditorLtiController;
+import iuonly.client.generated.api.DeptProvisioningUserApi;
 import lti.client.generated.api.LtiAuthApi;
 import lti.client.generated.api.LtiPropsApi;
 import lti.client.generated.model.LmsLtiAuthz;
@@ -16,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -53,6 +55,10 @@ public class LtiLaunchSecurityTest {
 
    @MockBean
    private LtiPropsApi ltiPropsApi;
+
+   @MockBean
+   @Qualifier("deptProvisioningUserApiViaAnonymous")
+   private DeptProvisioningUserApi deptProvisioningUserApi;
 
    @Test
    public void ltiLaunch() throws Exception {
