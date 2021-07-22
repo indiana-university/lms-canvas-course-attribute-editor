@@ -1,0 +1,13 @@
+.widthLimit {
+    width: max-content;
+    min-width: 35%;
+}
+
+.rowHeader {
+    font-weight: 700;
+    background-color: #f7f7f7;
+}
+
+.errorAlignment {
+    vertical-align: top;
+}
