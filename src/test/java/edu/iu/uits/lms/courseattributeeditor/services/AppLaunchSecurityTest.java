@@ -1,5 +1,6 @@
 package edu.iu.uits.lms.courseattributeeditor.services;
 
+import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationProvider;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationToken;
@@ -40,6 +41,9 @@ public class AppLaunchSecurityTest {
    @MockBean
    @Qualifier("deptProvisioningUserApiViaAnonymous")
    private DeptProvisioningUserApi deptProvisioningUserApi;
+
+   @MockBean
+   private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
 
    @Test
    public void appNoAuthnLaunch() throws Exception {
