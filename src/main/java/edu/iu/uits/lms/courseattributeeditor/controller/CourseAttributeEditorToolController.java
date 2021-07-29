@@ -5,9 +5,11 @@ import canvas.client.generated.api.SectionsApi;
 import canvas.client.generated.model.Course;
 import canvas.client.generated.model.Section;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
+import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
+import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.controller.LtiAuthenticationTokenAwareController;
-import edu.iu.uits.lms.lti.security.LtiAuthenticationProvider;
+import edu.iu.uits.lms.lti.security.LtiAuthenticationToken;
 import iuonly.client.generated.api.SudsApi;
 import iuonly.client.generated.model.SudsCourse;
 import lombok.Data;
@@ -43,6 +45,9 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
    @Autowired
    private SudsApi sudsApi;
+
+   @Autowired
+   private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
 
    @RequestMapping("/index")
    @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
@@ -194,7 +199,9 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    public ModelAndView submit(Model model, HttpServletRequest request, @PathVariable("editId") String editId,
                               @RequestParam Map<String, String> params) {
       log.debug("in /submit");
-      getTokenWithoutContext();
+      LtiAuthenticationToken token = getTokenWithoutContext();
+
+      String username = (String)token.getPrincipal();
 
       String courseTitle = params.get("course-title");
       String sisCourseId = params.get("course-sis-id");
@@ -205,14 +212,24 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       List<String> alreadyInUseList = new ArrayList<>();
       boolean errors = false;
 
-      if (!sisCourseId.equals("")) {
-         // TODO pass course info in as a variable to not look it up again?
-         Course course = coursesApi.getCourse(editId);
+      // TODO pass course info in as a variable to not look it up again?
+      Course existingCourse = coursesApi.getCourse(editId);
+      boolean courseUpdate = false;
+      String existingCourseName = existingCourse.getName();
+      String existingSisCourseId = "";
+      if (existingCourse.getSisCourseId() != null) {
+         existingSisCourseId = existingCourse.getSisCourseId();
+      }
 
+      if (!existingCourseName.equals(courseTitle) || !existingSisCourseId.equals(sisCourseId)) {
+         courseUpdate = true;
+      }
+
+      if (courseUpdate && !sisCourseId.equals("")) {
          // need this to not have a false positive on looking up if a sis_course_id already exists in Canvas
          boolean newCourseSisId = true;
-         if (course.getSisCourseId() != null) {
-            newCourseSisId = !course.getSisCourseId().equals(sisCourseId);
+         if (existingCourse.getSisCourseId() != null) {
+            newCourseSisId = !existingCourse.getSisCourseId().equals(sisCourseId);
          }
 
          if (newCourseSisId) {
@@ -250,27 +267,45 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          }
 
          if (readyToUpdateSection) {
-            // if it's an empty string, don't bother with error checking
-            if (!sisSectionId.equals("")) {
-               Section section = sectionsApi.getSection("sis_section_id:" + sisSectionId);
+            boolean sectionUpdate = false;
+            Section existingSection = sectionsApi.getSection(sectionId);
+            String existingSectionName = existingSection.getName();
+            String existingSisSectionId = "";
 
-               if (section != null) {
-                  // found something, let's make sure it didn't find itself before declaring it already in use
-                  if (!section.getId().equals(sectionId)) {
-                     errors = true;
-                     sectionWithSISCheck.setAlreadyInCanvas(true);
-                     alreadyInUseList.add("section-sis-id-" + sectionId);
-                  }
-               }
+            if (existingSection.getSisSectionId() != null) {
+               existingSisSectionId = existingSection.getSisSectionId();
             }
 
-            Section sectionToUpdate = new Section();
-            sectionToUpdate.setId(sectionId);
-            sectionToUpdate.setSisSectionId(sisSectionId);
-            sectionToUpdate.setName(name);
+            if (!existingSectionName.equals(name) || !existingSisSectionId.equals(sisSectionId)) {
+               sectionUpdate = true;
+            }
 
-            sectionWithSISCheck.setSection(sectionToUpdate);
-            sections.add(sectionWithSISCheck);
+            // if nothing changed, don't bother with any of this stuff
+            if (sectionUpdate) {
+               // if it's an empty string, don't bother with error checking
+               if (!sisSectionId.equals("")) {
+                  Section section = sectionsApi.getSection("sis_section_id:" + sisSectionId);
+
+                  if (section != null) {
+                     // found something, let's make sure it didn't find itself before declaring it already in use
+                     if (!section.getId().equals(sectionId)) {
+                        errors = true;
+                        sectionWithSISCheck.setAlreadyInCanvas(true);
+                        alreadyInUseList.add("section-sis-id-" + sectionId);
+                     }
+                  }
+               }
+
+               Section sectionToUpdate = new Section();
+               sectionToUpdate.setId(sectionId);
+               sectionToUpdate.setSisSectionId(sisSectionId);
+               sectionToUpdate.setName(name);
+
+               sectionWithSISCheck.setSection(sectionToUpdate);
+               sectionWithSISCheck.setOldSectionName(existingSection.getName());
+               sectionWithSISCheck.setOldSectionSisId(existingSection.getSisSectionId());
+               sections.add(sectionWithSISCheck);
+            }
 
             // reset variables for next iteration
             readyToUpdateSection = false;
@@ -290,15 +325,27 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       }
 
       // No errors, so let's update stuff, sadly one rest call at a time!
-      Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseTitle, sisCourseId);
+      if (courseUpdate) {
+         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseTitle, sisCourseId);
 
-      // if this failed, return
-      if (course == null) {
-         model.addAttribute("canvasError", true);
-         return edit(editId, model, request);
+         // if this failed, return
+         if (course == null) {
+            model.addAttribute("canvasError", true);
+            return edit(editId, model, request);
+         }
+
+         // no course error, log the change
+         CourseAttributeAuditLog audit = new CourseAttributeAuditLog(username);
+         audit.setCanvasCourseId(editId);
+         audit.setOldCourseName(existingCourse.getName());
+         audit.setNewCourseName(courseTitle);
+         audit.setOldCourseSisId(existingCourse.getSisCourseId());
+         audit.setNewCourseSisId(sisCourseId);
+         courseAttributeAuditLogRepository.save(audit);
       }
 
       // update section
+      // if sections turns out to be empty, this code will just be bypassed
       for (SectionWithSISCheck sectionWithSISCheck : sections) {
          Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), sectionWithSISCheck.getSection().getName(), sectionWithSISCheck.getSection().getSisSectionId());
 
@@ -307,6 +354,16 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
             model.addAttribute("canvasError", true);
             return edit(editId, model, request);
          }
+
+         // no section error, log the change
+         CourseAttributeAuditLog audit = new CourseAttributeAuditLog(username);
+         audit.setCanvasCourseId(editId);
+         audit.setCanvasSectionId(sectionWithSISCheck.getSection().getId());
+         audit.setOldSectionName(sectionWithSISCheck.getOldSectionName());
+         audit.setNewSectionName(sectionWithSISCheck.getSection().getName());
+         audit.setOldSectionSisId(sectionWithSISCheck.getOldSectionSisId());
+         audit.setNewSectionSisId(sectionWithSISCheck.getSection().getSisSectionId());
+         courseAttributeAuditLogRepository.save(audit);
       }
 
       // if we made it here, success!
@@ -320,5 +377,8 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       Section section;
       boolean isSisProvisioned;
       boolean isAlreadyInCanvas;
+      // the "old" section stuff are just here for convenience of the audit log
+      String oldSectionName;
+      String oldSectionSisId;
    }
 }
