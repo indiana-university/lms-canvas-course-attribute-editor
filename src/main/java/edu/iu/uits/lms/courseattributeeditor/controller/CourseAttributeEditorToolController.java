@@ -15,9 +15,12 @@ import iuonly.client.generated.model.SudsCourse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -326,7 +332,9 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       // No errors, so let's update stuff, sadly one rest call at a time!
       if (courseUpdate) {
-         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseTitle, sisCourseId);
+         HashMap valueMap = new HashMap();
+         valueMap.put(sisCourseId, courseTitle);
+         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, valueMap);
 
          // if this failed, return
          if (course == null) {
