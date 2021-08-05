@@ -3,6 +3,7 @@ package edu.iu.uits.lms.courseattributeeditor.controller;
 import canvas.client.generated.api.CoursesApi;
 import canvas.client.generated.api.SectionsApi;
 import canvas.client.generated.model.Course;
+import canvas.client.generated.model.CourseSectionUpdateWrapper;
 import canvas.client.generated.model.Section;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
@@ -15,12 +16,9 @@ import iuonly.client.generated.model.SudsCourse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -332,9 +328,10 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       // No errors, so let's update stuff, sadly one rest call at a time!
       if (courseUpdate) {
-         HashMap valueMap = new HashMap();
-         valueMap.put(sisCourseId, courseTitle);
-         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, valueMap);
+         CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
+         courseSectionUpdateWrapper.setCourseName(courseTitle);
+         courseSectionUpdateWrapper.setSisId(sisCourseId);
+         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
          // if this failed, return
          if (course == null) {
