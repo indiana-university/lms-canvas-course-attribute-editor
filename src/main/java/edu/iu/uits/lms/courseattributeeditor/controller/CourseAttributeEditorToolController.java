@@ -329,7 +329,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       // No errors, so let's update stuff, sadly one rest call at a time!
       if (courseUpdate) {
          CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
-         courseSectionUpdateWrapper.setCourseName(courseTitle);
+         courseSectionUpdateWrapper.setName(courseTitle);
          courseSectionUpdateWrapper.setSisId(sisCourseId);
          Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
@@ -352,7 +352,10 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       // update section
       // if sections turns out to be empty, this code will just be bypassed
       for (SectionWithSISCheck sectionWithSISCheck : sections) {
-         Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), sectionWithSISCheck.getSection().getName(), sectionWithSISCheck.getSection().getSisSectionId());
+         CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
+         courseSectionUpdateWrapper.setName(sectionWithSISCheck.getSection().getName());
+         courseSectionUpdateWrapper.setSisId(sectionWithSISCheck.getSection().getSisSectionId());
+         Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), courseSectionUpdateWrapper);
 
          // if this failed, go ahead and return
          if (section == null) {
