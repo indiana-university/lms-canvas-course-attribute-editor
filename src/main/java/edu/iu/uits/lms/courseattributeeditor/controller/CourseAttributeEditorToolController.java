@@ -66,6 +66,11 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       log.debug("in /find");
       getTokenWithoutContext();
 
+      if (searchBox == null || searchBox.isEmpty()) {
+         model.addAttribute("blankSearch", true);
+         return new ModelAndView("index");
+      }
+
       model.addAttribute("breadcrumb", true);
       model.addAttribute("tier2breadcrumb", true);
       model.addAttribute("searchBox", searchBox);
