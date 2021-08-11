@@ -11,3 +11,7 @@
 .errorAlignment {
     vertical-align: top;
 }
+
+.hideMe {
+    display: none;
+}

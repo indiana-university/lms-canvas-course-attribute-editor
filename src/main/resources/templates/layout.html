@@ -28,7 +28,10 @@
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
                                    th:aria-invalid="${blankSearch} ? true" />
                             <div class="rvt-input-group__append">
-                                <button class="rvt-button">Find</button>
+                                <button class="rvt-button" onclick="buttonLoading(this)">
+                                    <span class="rvt-button__content">Find</span>
+                                    <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                                </button>
                             </div>
                         </div>
                         <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">

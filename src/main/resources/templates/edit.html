@@ -95,8 +95,14 @@
                         </fieldset>
                     </table>
                     <div class="rvt-m-top-md">
-                        <button id="saveButton" class="rvt-button rvt-m-right-xs">Save</button>
-                        <button class="rvt-button rvt-button--secondary" name="action" value="cancel">Cancel</button>
+                        <button id="saveButton" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
+                            <span class="rvt-button__content">Save</span>
+                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                        </button>
+                        <button class="rvt-button rvt-button--secondary" name="action" value="cancel" onclick="buttonLoading(this)">
+                            <span class="rvt-button__content">Cancel</span>
+                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                        </button>
                     </div>
                 </form>
             </main>
