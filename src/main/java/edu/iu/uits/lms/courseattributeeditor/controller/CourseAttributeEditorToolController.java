@@ -3,6 +3,7 @@ package edu.iu.uits.lms.courseattributeeditor.controller;
 import canvas.client.generated.api.CoursesApi;
 import canvas.client.generated.api.SectionsApi;
 import canvas.client.generated.model.Course;
+import canvas.client.generated.model.CourseSectionUpdateWrapper;
 import canvas.client.generated.model.Section;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -326,7 +328,10 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       // No errors, so let's update stuff, sadly one rest call at a time!
       if (courseUpdate) {
-         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseTitle, sisCourseId);
+         CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
+         courseSectionUpdateWrapper.setName(courseTitle);
+         courseSectionUpdateWrapper.setSisId(sisCourseId);
+         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
          // if this failed, return
          if (course == null) {
@@ -347,7 +352,10 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       // update section
       // if sections turns out to be empty, this code will just be bypassed
       for (SectionWithSISCheck sectionWithSISCheck : sections) {
-         Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), sectionWithSISCheck.getSection().getName(), sectionWithSISCheck.getSection().getSisSectionId());
+         CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
+         courseSectionUpdateWrapper.setName(sectionWithSISCheck.getSection().getName());
+         courseSectionUpdateWrapper.setSisId(sectionWithSISCheck.getSection().getSisSectionId());
+         Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), courseSectionUpdateWrapper);
 
          // if this failed, go ahead and return
          if (section == null) {
