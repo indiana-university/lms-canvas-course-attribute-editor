@@ -12,6 +12,7 @@
     vertical-align: top;
 }
 
+/* if we use rvt-display-none, the spinning icon does not show up in buttons */
 .hideMe {
     display: none;
 }
