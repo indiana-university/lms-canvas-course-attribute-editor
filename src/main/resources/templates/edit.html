@@ -99,10 +99,11 @@
                             <span class="rvt-button__content">Save</span>
                             <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
                         </button>
-                        <button class="rvt-button rvt-button--secondary" name="action" value="cancel" onclick="buttonLoading(this)">
+                        <button class="rvt-button rvt-button--secondary" data-action="cancel" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Cancel</span>
                             <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
                         </button>
+                        <input id="caeSubmit" type="hidden" name="action" />
                     </div>
                 </form>
             </main>

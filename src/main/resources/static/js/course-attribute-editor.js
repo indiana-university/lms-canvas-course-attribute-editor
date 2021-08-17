@@ -1,4 +1,8 @@
 function buttonLoading(button) {
+    if (button.dataset.action != null) {
+        document.getElementById("caeSubmit").value = button.dataset.action;
+    }
+
     button.setAttribute("aria-busy", true);
     var buttonsToDisable = document.getElementsByTagName('button');
     for(var i = 0; i < buttonsToDisable.length; i++) {
