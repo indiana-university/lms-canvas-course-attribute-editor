@@ -131,13 +131,31 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       log.debug("in /edit");
       getTokenWithoutContext();
 
+      // code to lookup search criteria
+      Course course = coursesApi.getCourse(editId);
+
+      // check Suds to see if this is a legit course / keep users from cheating into this call
+      boolean editable = true;
+      SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(course.getSisCourseId());
+      if (sudsCourse != null) {
+         // we have a match, so this course is not editable
+         editable = false;
+      } else {
+         // check archive table
+         SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
+         editable = (sudsCourseArchive == null);
+      }
+
+      if (!editable) {
+         // user shouldn't be on this page so send them elsewhere
+         return find(model, request, editId);
+      }
+
       model.addAttribute("breadcrumb", true);
       model.addAttribute("tier3breadcrumb", true);
       model.addAttribute("searchBox", editId);
       model.addAttribute("pageTitle", "Edit Course");
 
-      // code to lookup search criteria
-      Course course = coursesApi.getCourse(editId);
       // boo-urns that this is a separate call and not included in coursesApi.getCourse(searchBox);
       List<Section> listOfSections = coursesApi.getCourseSections(editId);
 
@@ -146,14 +164,14 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       for (Section section : listOfSections) {
          SectionWithSISCheck sectionWithSISCheck = new SectionWithSISCheck();
-         SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(section.getSisSectionId());
+         SudsCourse sudsSection = sudsApi.getSudsCourseBySiteId(section.getSisSectionId());
          boolean isSisProvisioned = false;
-         if (sudsCourse != null) {
+         if (sudsSection != null) {
             // we have a match, so this section is not editable
             isSisProvisioned = true;
          } else {
-            SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(section.getSisSectionId());
-            if (sudsCourseArchive != null) {
+            SudsCourse sudsSectionArchive = sudsApi.getSudsArchiveCourseBySiteId(section.getSisSectionId());
+            if (sudsSectionArchive != null) {
                // we have a match, so this section is not editable
                isSisProvisioned = true;
             }
