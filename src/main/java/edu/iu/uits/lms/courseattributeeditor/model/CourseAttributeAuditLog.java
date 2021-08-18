@@ -43,6 +43,12 @@ public class CourseAttributeAuditLog {
     @Column(name = "NEW_COURSE_SIS_ID")
     private String newCourseSisId;
 
+    @Column(name = "OLD_COURSE_CODE")
+    private String oldCourseCode;
+
+    @Column(name = "NEW_COURSE_CODE")
+    private String newCourseCode;
+
     @Column(name = "CANVAS_SECTION_ID")
     private String canvasSectionId;
 

@@ -35,7 +35,7 @@
                         <label for="course-title">Course Title</label>
                         <input type="text" id="course-title" name="course-title" th:value="${overrideCourseTitle} ? ${overrideCourseTitle} : ${course.name}" />
                         <label for="course-code" class="rvt-m-top-md">Course Code</label>
-                        <input type="text" id="course-code" name="course-code" th:value="${course.courseCode}" disabled aria-disabled="true" />
+                        <input type="text" id="course-code" name="course-code" th:value="${overrideCourseCode} ? ${overrideCourseCode} : ${course.courseCode}" />
                         <label for="course-sis-id" class="rvt-m-top-md">Course SIS ID</label>
                         <input type="text" id="course-sis-id" name="course-sis-id" th:value="${overrideSisCourseId} ? ${overrideSisCourseId} : ${course.sisCourseId}"
                                th:classappend="${courseSisIdError} ? 'rvt-validation-danger'" th:aria-describedby="${courseSisIdError} ? 'course-sis-id-message'"

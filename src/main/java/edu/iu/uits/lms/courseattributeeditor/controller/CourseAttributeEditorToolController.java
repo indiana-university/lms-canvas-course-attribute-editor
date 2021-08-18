@@ -211,10 +211,12 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       String username = (String)token.getPrincipal();
 
       String courseTitle = params.get("course-title");
+      String courseCode = params.get("course-code");
       String sisCourseId = params.get("course-sis-id");
 
       model.addAttribute("overrideSisCourseId", sisCourseId);
       model.addAttribute("overrideCourseTitle", courseTitle);
+      model.addAttribute("overrideCourseCode", courseCode);
 
       List<String> alreadyInUseList = new ArrayList<>();
       boolean errors = false;
@@ -223,12 +225,13 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       Course existingCourse = coursesApi.getCourse(editId);
       boolean courseUpdate = false;
       String existingCourseName = existingCourse.getName();
+      String existingCourseCode = existingCourse.getCourseCode();
       String existingSisCourseId = "";
       if (existingCourse.getSisCourseId() != null) {
          existingSisCourseId = existingCourse.getSisCourseId();
       }
 
-      if (!existingCourseName.equals(courseTitle) || !existingSisCourseId.equals(sisCourseId)) {
+      if (!existingCourseName.equals(courseTitle) || !existingSisCourseId.equals(sisCourseId) || !existingSisCourseId.equals(existingCourseCode)) {
          courseUpdate = true;
       }
 
@@ -336,6 +339,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
          courseSectionUpdateWrapper.setName(courseTitle);
          courseSectionUpdateWrapper.setSisId(sisCourseId);
+         courseSectionUpdateWrapper.setCourseCode(courseCode);
          Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
          // if this failed, return
@@ -351,6 +355,8 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          audit.setNewCourseName(courseTitle);
          audit.setOldCourseSisId(existingCourse.getSisCourseId());
          audit.setNewCourseSisId(sisCourseId);
+         audit.setOldCourseCode(existingCourse.getCourseCode());
+         audit.setNewCourseCode(courseCode);
          courseAttributeAuditLogRepository.save(audit);
       }
 
