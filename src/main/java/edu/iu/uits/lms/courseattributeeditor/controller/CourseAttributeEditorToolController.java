@@ -68,6 +68,11 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       log.debug("in /find");
       getTokenWithoutContext();
 
+      if (searchBox == null || searchBox.isEmpty()) {
+         model.addAttribute("blankSearch", true);
+         return new ModelAndView("index");
+      }
+
       model.addAttribute("breadcrumb", true);
       model.addAttribute("tier2breadcrumb", true);
       model.addAttribute("searchBox", searchBox);
@@ -126,13 +131,31 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       log.debug("in /edit");
       getTokenWithoutContext();
 
+      // code to lookup search criteria
+      Course course = coursesApi.getCourse(editId);
+
+      // check Suds to see if this is a legit course / keep users from cheating into this call
+      boolean editable = true;
+      SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(course.getSisCourseId());
+      if (sudsCourse != null) {
+         // we have a match, so this course is not editable
+         editable = false;
+      } else {
+         // check archive table
+         SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
+         editable = (sudsCourseArchive == null);
+      }
+
+      if (!editable) {
+         // user shouldn't be on this page so send them elsewhere
+         return find(model, request, editId);
+      }
+
       model.addAttribute("breadcrumb", true);
       model.addAttribute("tier3breadcrumb", true);
       model.addAttribute("searchBox", editId);
       model.addAttribute("pageTitle", "Edit Course");
 
-      // code to lookup search criteria
-      Course course = coursesApi.getCourse(editId);
       // boo-urns that this is a separate call and not included in coursesApi.getCourse(searchBox);
       List<Section> listOfSections = coursesApi.getCourseSections(editId);
 
@@ -141,14 +164,14 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
       for (Section section : listOfSections) {
          SectionWithSISCheck sectionWithSISCheck = new SectionWithSISCheck();
-         SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(section.getSisSectionId());
+         SudsCourse sudsSection = sudsApi.getSudsCourseBySiteId(section.getSisSectionId());
          boolean isSisProvisioned = false;
-         if (sudsCourse != null) {
+         if (sudsSection != null) {
             // we have a match, so this section is not editable
             isSisProvisioned = true;
          } else {
-            SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(section.getSisSectionId());
-            if (sudsCourseArchive != null) {
+            SudsCourse sudsSectionArchive = sudsApi.getSudsArchiveCourseBySiteId(section.getSisSectionId());
+            if (sudsSectionArchive != null) {
                // we have a match, so this section is not editable
                isSisProvisioned = true;
             }
@@ -206,10 +229,12 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       String username = (String)token.getPrincipal();
 
       String courseTitle = params.get("course-title");
+      String courseCode = params.get("course-code");
       String sisCourseId = params.get("course-sis-id");
 
       model.addAttribute("overrideSisCourseId", sisCourseId);
       model.addAttribute("overrideCourseTitle", courseTitle);
+      model.addAttribute("overrideCourseCode", courseCode);
 
       List<String> alreadyInUseList = new ArrayList<>();
       boolean errors = false;
@@ -218,12 +243,13 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       Course existingCourse = coursesApi.getCourse(editId);
       boolean courseUpdate = false;
       String existingCourseName = existingCourse.getName();
+      String existingCourseCode = existingCourse.getCourseCode();
       String existingSisCourseId = "";
       if (existingCourse.getSisCourseId() != null) {
          existingSisCourseId = existingCourse.getSisCourseId();
       }
 
-      if (!existingCourseName.equals(courseTitle) || !existingSisCourseId.equals(sisCourseId)) {
+      if (!existingCourseName.equals(courseTitle) || !existingSisCourseId.equals(sisCourseId) || !existingSisCourseId.equals(existingCourseCode)) {
          courseUpdate = true;
       }
 
@@ -331,6 +357,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
          courseSectionUpdateWrapper.setName(courseTitle);
          courseSectionUpdateWrapper.setSisId(sisCourseId);
+         courseSectionUpdateWrapper.setCourseCode(courseCode);
          Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
          // if this failed, return
@@ -346,6 +373,8 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          audit.setNewCourseName(courseTitle);
          audit.setOldCourseSisId(existingCourse.getSisCourseId());
          audit.setNewCourseSisId(sisCourseId);
+         audit.setOldCourseCode(existingCourse.getCourseCode());
+         audit.setNewCourseCode(courseCode);
          courseAttributeAuditLogRepository.save(audit);
       }
 

@@ -35,7 +35,7 @@
                         <label for="course-title">Course Title</label>
                         <input type="text" id="course-title" name="course-title" th:value="${overrideCourseTitle} ? ${overrideCourseTitle} : ${course.name}" />
                         <label for="course-code" class="rvt-m-top-md">Course Code</label>
-                        <input type="text" id="course-code" name="course-code" th:value="${course.courseCode}" disabled aria-disabled="true" />
+                        <input type="text" id="course-code" name="course-code" th:value="${overrideCourseCode} ? ${overrideCourseCode} : ${course.courseCode}" />
                         <label for="course-sis-id" class="rvt-m-top-md">Course SIS ID</label>
                         <input type="text" id="course-sis-id" name="course-sis-id" th:value="${overrideSisCourseId} ? ${overrideSisCourseId} : ${course.sisCourseId}"
                                th:classappend="${courseSisIdError} ? 'rvt-validation-danger'" th:aria-describedby="${courseSisIdError} ? 'course-sis-id-message'"
@@ -95,8 +95,15 @@
                         </fieldset>
                     </table>
                     <div class="rvt-m-top-md">
-                        <button id="saveButton" class="rvt-button rvt-m-right-xs">Save</button>
-                        <button class="rvt-button rvt-button--secondary" name="action" value="cancel">Cancel</button>
+                        <button id="saveButton" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
+                            <span class="rvt-button__content">Save</span>
+                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                        </button>
+                        <button class="rvt-button rvt-button--secondary" data-action="cancel" onclick="buttonLoading(this)">
+                            <span class="rvt-button__content">Cancel</span>
+                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                        </button>
+                        <input id="caeSubmit" type="hidden" name="action" />
                     </div>
                 </form>
             </main>
