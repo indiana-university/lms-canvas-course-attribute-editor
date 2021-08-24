@@ -10,4 +10,7 @@ function buttonLoading(button) {
     }
     button.classList.add("rvt-button--loading");
     button.getElementsByTagName('div')[0].classList.remove("hideMe");
+
+    // FF doesn't need this, but Chrome and Edge do
+    button.form.submit();
 }
