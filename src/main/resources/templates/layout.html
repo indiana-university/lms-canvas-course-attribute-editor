@@ -3,33 +3,69 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <title>microservices-template - Home</title>
+    <title>Course Attribute Editor</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/jsrivet/rivet-bundle.min.css}" />
-    <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/css/microservices-template.css}"/>
+    <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/css/course-attribute-editor.css}"/>
 </head>
 <body>
 
-<div layout:fragment="content" class="rvt-container" role="main">
-    Page content goes here
-    <!--
-        add something like this to the child page to complete the page layout
+<div id="main-container" class="rvt-container">
+    <div class="widthLimit">
+        <!-- banner -->
+        <header role="banner">
+            <form th:action="@{|/app/find|}" method="post">
+                <div class="rvt-p-tb-sm"><span class="rvt-ts-23">Course Attribute Editor</span></div>
+                <label for="searchBox">Canvas Course ID</label>
+                <div class="rvt-flex">
+                    <div class="rvt-m-right-sm">
+                        <div class="rvt-input-group">
+                            <input class="rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
+                                   th:classappend="${blankSearch} ? 'rvt-validation-danger'"
+                                   th:aria-describedby="${blankSearch} ? 'blank-search-message'"
+                                   th:aria-invalid="${blankSearch} ? true" />
+                            <div class="rvt-input-group__append">
+                                <button class="rvt-button" onclick="buttonLoading(this)">
+                                    <span class="rvt-button__content">Find</span>
+                                    <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">
+                            <span class="rvt-inline-alert__icon">
+                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                    <g fill="currentColor">
+                                        <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z" />
+                                        <path d="M10.83,5.17a1,1,0,0,0-1.41,0L8,6.59,6.59,5.17A1,1,0,0,0,5.17,6.59L6.59,8,5.17,9.41a1,1,0,1,0,1.41,1.41L8,9.41l1.41,1.41a1,1,0,0,0,1.41-1.41L9.41,8l1.41-1.41A1,1,0,0,0,10.83,5.17Z"/>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span class="rvt-inline-alert__message" id="blank-search-message">
+                                Please enter a Canvas Course ID before clicking Find.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </header>
+        <!-- breadcrumb -->
+        <div class="rvt-p-bottom-md rvt-border-bottom" th:if="${breadcrumb}"></div>
+        <nav role="navigation" aria-label="Breadcrumbs" th:if="${breadcrumb}">
+            <ol class="rvt-breadcrumbs rvt-p-top-md">
+                <li><a th:href="@{|/app/index|}">Course Attribute Editor</a></li>
+                <li th:if="${tier2breadcrumb}" aria-current="page" th:text="${pageTitle}">Canvas Course ID: 123456</li>
+                <li th:if="${tier3breadcrumb}"><a th:href="@{|/app/find/${searchBox}|}" th:text="@{|Canvas Course ID: ${searchBox}|}">Canvas Course ID: 123456</a></li>
+                <li th:if="${tier3breadcrumb}" aria-current="page" th:text="${pageTitle}">Edit Course</li>
+            </ol>
+        </nav>
 
-        <div class="rvt-grid">
-            <div class="rvt-grid__item">
-                <span>Grid item</span>
-            </div>
+        <div layout:fragment="content">
         </div>
-
-        See https://rivet.uits.iu.edu/components/layout/grid/ for options, depending on what's needed.
-    -->
-
+    </div>
 </div>
-
-
 
 <footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container rvt-m-top-lg">
     <div id="footer" th:text="${@serverInfo}"></div>
@@ -37,7 +73,7 @@
 
 <script type="text/javascript" th:src="@{/app/jsrivet/rivet-bundle.min.js}"></script>
 <script type="text/javascript" th:src="@{/app/webjars/jquery/jquery.min.js}"></script>
-<script type="text/javascript" th:src="@{/app/js/microservices-template.js}"></script>
+<script type="text/javascript" th:src="@{/app/js/course-attribute-editor.js}"></script>
 
 <th:block layout:fragment="script">
     <!--
