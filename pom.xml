@@ -4,7 +4,7 @@
     <artifactId>course-attribute-editor</artifactId>
     <packaging>jar</packaging>
     <name>course-attribute-editor</name>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
 
     <parent>
         <artifactId>lms2Wow</artifactId>
