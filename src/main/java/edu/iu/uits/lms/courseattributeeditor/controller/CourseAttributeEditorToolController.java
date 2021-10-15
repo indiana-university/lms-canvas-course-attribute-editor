@@ -8,8 +8,8 @@ import canvas.client.generated.model.Section;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
+import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.controller.LtiAuthenticationTokenAwareController;
-import edu.iu.uits.lms.lti.security.LtiAuthenticationProvider;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationToken;
 import iuonly.client.generated.api.SudsApi;
 import iuonly.client.generated.model.SudsCourse;
@@ -51,7 +51,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
 
    @RequestMapping("/index")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView index(Model model, HttpServletRequest request) {
       log.debug("in /index");
       getTokenWithoutContext();
@@ -62,7 +62,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    }
 
    @RequestMapping("/find")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView find(Model model, HttpServletRequest request, @RequestParam("searchBox") String searchBox) {
       log.debug("in /find");
       getTokenWithoutContext();
@@ -119,13 +119,13 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
     * @return
     */
    @RequestMapping("/find/{searchBox}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView returnTofind(Model model, HttpServletRequest request, @PathVariable("searchBox") String searchBox) {
       return find(model, request, searchBox);
    }
 
    @RequestMapping("/edit/{editId}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView edit(@PathVariable("editId") String editId, Model model, HttpServletRequest request) {
       log.debug("in /edit");
       getTokenWithoutContext();
@@ -210,7 +210,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    }
 
    @PostMapping(value = "/submit/{editId}", params = "action=cancel")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView cancel(Model model, HttpServletRequest request, @PathVariable("editId") String editId) {
       log.debug("in /cancel");
       getTokenWithoutContext();
@@ -219,7 +219,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    }
 
    @RequestMapping("/submit/{editId}")
-   @Secured(LtiAuthenticationProvider.LTI_USER_ROLE)
+   @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView submit(Model model, HttpServletRequest request, @PathVariable("editId") String editId,
                               @RequestParam Map<String, String> params) {
       log.debug("in /submit");
