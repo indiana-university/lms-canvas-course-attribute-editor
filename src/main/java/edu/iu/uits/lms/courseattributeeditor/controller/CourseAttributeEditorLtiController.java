@@ -1,5 +1,6 @@
 package edu.iu.uits.lms.courseattributeeditor.controller;
 
+import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.controller.LtiController;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationProvider;
 import edu.iu.uits.lms.lti.security.LtiAuthenticationToken;
@@ -19,7 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static canvas.helpers.CanvasConstants.ADMIN_ROLE;
 
 @Controller
 @RequestMapping({"/lti"})
@@ -65,6 +69,9 @@ public class CourseAttributeEditorLtiController extends LtiController {
             rolesString = "Instructor";
             request.getSession().setAttribute("groups", user.getGroupCode());
         }
+
+        // add the current role to the string check. if it's one of our default roles, then it's cool
+        rolesString += "," + launchParams.get(BasicLTIConstants.ROLES);
 
         String[] userRoles = rolesString.split(",");
         String authority = returnEquivalentAuthority(Arrays.asList(userRoles), getDefaultInstructorRoles());
