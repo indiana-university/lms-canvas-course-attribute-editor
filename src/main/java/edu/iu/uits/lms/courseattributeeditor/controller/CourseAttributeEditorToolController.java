@@ -1,18 +1,18 @@
 package edu.iu.uits.lms.courseattributeeditor.controller;
 
-import canvas.client.generated.api.CoursesApi;
-import canvas.client.generated.api.SectionsApi;
-import canvas.client.generated.model.Course;
-import canvas.client.generated.model.CourseSectionUpdateWrapper;
-import canvas.client.generated.model.Section;
+import edu.iu.uits.lms.canvas.model.Course;
+import edu.iu.uits.lms.canvas.model.CourseSectionUpdateWrapper;
+import edu.iu.uits.lms.canvas.model.Section;
+import edu.iu.uits.lms.canvas.services.CourseService;
+import edu.iu.uits.lms.canvas.services.SectionService;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
+import edu.iu.uits.lms.iuonly.model.SudsCourse;
+import edu.iu.uits.lms.iuonly.services.SudsServiceImpl;
 import edu.iu.uits.lms.lti.LTIConstants;
-import edu.iu.uits.lms.lti.controller.LtiAuthenticationTokenAwareController;
-import edu.iu.uits.lms.lti.security.LtiAuthenticationToken;
-import iuonly.client.generated.api.SudsApi;
-import iuonly.client.generated.model.SudsCourse;
+import edu.iu.uits.lms.lti.controller.OidcTokenAwareController;
+import edu.iu.uits.lms.lti.service.OidcTokenUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import uk.ac.ox.ctl.lti13.security.oauth2.client.lti.authentication.OidcAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -33,24 +34,24 @@ import java.util.Map;
 @Controller
 @RequestMapping("/app")
 @Slf4j
-public class CourseAttributeEditorToolController extends LtiAuthenticationTokenAwareController {
+public class CourseAttributeEditorToolController extends OidcTokenAwareController {
 
    @Autowired
    private ToolConfig toolConfig;
 
    @Autowired
-   private CoursesApi coursesApi;
+   private CourseService courseService;
 
    @Autowired
-   private SectionsApi sectionsApi;
+   private SectionService sectionService;
 
    @Autowired
-   private SudsApi sudsApi;
+   private SudsServiceImpl sudsService;
 
    @Autowired
    private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
 
-   @RequestMapping("/index")
+   @RequestMapping({"/index", "/launch"})
    @Secured(LTIConstants.INSTRUCTOR_AUTHORITY)
    public ModelAndView index(Model model, HttpServletRequest request) {
       log.debug("in /index");
@@ -77,26 +78,26 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       model.addAttribute("searchBox", searchBox);
 
       // code to lookup search criteria
-      Course course = coursesApi.getCourse(searchBox);
+      Course course = courseService.getCourse(searchBox);
 
       if (course != null) {
          // set this regardless of rest of the logic
          model.addAttribute("courseFound", true);
          model.addAttribute("pageTitle", "Canvas Course ID: " + searchBox);
          model.addAttribute("course", course);
-         // boo-urns that this is a separate call and not included in coursesApi.getCourse(searchBox);
-         List<Section> sections = coursesApi.getCourseSections(searchBox);
+         // boo-urns that this is a separate call and not included in courseService.getCourse(searchBox);
+         List<Section> sections = courseService.getCourseSections(searchBox);
          model.addAttribute("sections", sections);
 
          if (course.getSisCourseId() != null) {
             // check Suds to see if this is a legit course
-            SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(course.getSisCourseId());
+            SudsCourse sudsCourse = sudsService.getSudsCourseBySiteId(course.getSisCourseId());
             if (sudsCourse != null) {
                // we have a match, so this course is not editable
                model.addAttribute("editable", false);
             } else {
                // check archive table
-               SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
+               SudsCourse sudsCourseArchive = sudsService.getSudsArchiveCourseBySiteId(course.getSisCourseId());
                model.addAttribute("editable", sudsCourseArchive == null);
             }
          } else {
@@ -131,17 +132,17 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       getTokenWithoutContext();
 
       // code to lookup search criteria
-      Course course = coursesApi.getCourse(editId);
+      Course course = courseService.getCourse(editId);
 
       // check Suds to see if this is a legit course / keep users from cheating into this call
       boolean editable = true;
-      SudsCourse sudsCourse = sudsApi.getSudsCourseBySiteId(course.getSisCourseId());
+      SudsCourse sudsCourse = sudsService.getSudsCourseBySiteId(course.getSisCourseId());
       if (sudsCourse != null) {
          // we have a match, so this course is not editable
          editable = false;
       } else {
          // check archive table
-         SudsCourse sudsCourseArchive = sudsApi.getSudsArchiveCourseBySiteId(course.getSisCourseId());
+         SudsCourse sudsCourseArchive = sudsService.getSudsArchiveCourseBySiteId(course.getSisCourseId());
          editable = (sudsCourseArchive == null);
       }
 
@@ -155,21 +156,21 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       model.addAttribute("searchBox", editId);
       model.addAttribute("pageTitle", "Edit Course");
 
-      // boo-urns that this is a separate call and not included in coursesApi.getCourse(searchBox);
-      List<Section> listOfSections = coursesApi.getCourseSections(editId);
+      // boo-urns that this is a separate call and not included in courseService.getCourse(searchBox);
+      List<Section> listOfSections = courseService.getCourseSections(editId);
 
       // all this is to determine if the section is an official SIS provisioned course
       List<SectionWithSISCheck> sections = new ArrayList<>();
 
       for (Section section : listOfSections) {
          SectionWithSISCheck sectionWithSISCheck = new SectionWithSISCheck();
-         SudsCourse sudsSection = sudsApi.getSudsCourseBySiteId(section.getSisSectionId());
+         SudsCourse sudsSection = sudsService.getSudsCourseBySiteId(section.getSis_section_id());
          boolean isSisProvisioned = false;
          if (sudsSection != null) {
             // we have a match, so this section is not editable
             isSisProvisioned = true;
          } else {
-            SudsCourse sudsSectionArchive = sudsApi.getSudsArchiveCourseBySiteId(section.getSisSectionId());
+            SudsCourse sudsSectionArchive = sudsService.getSudsArchiveCourseBySiteId(section.getSis_section_id());
             if (sudsSectionArchive != null) {
                // we have a match, so this section is not editable
                isSisProvisioned = true;
@@ -182,7 +183,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          if (sectionOverrides != null) {
             for (SectionWithSISCheck swsc : sectionOverrides) {
                if (swsc.getSection().getId().equals(section.getId())) {
-                  section.setSisSectionId(swsc.getSection().getSisSectionId());
+                  section.setSis_section_id((swsc.getSection().getSis_section_id()));
                   section.setName(swsc.getSection().getName());
 
                   sectionWithSISCheck.setAlreadyInCanvas(swsc.isAlreadyInCanvas());
@@ -223,9 +224,9 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
    public ModelAndView submit(Model model, HttpServletRequest request, @PathVariable("editId") String editId,
                               @RequestParam Map<String, String> params) {
       log.debug("in /submit");
-      LtiAuthenticationToken token = getTokenWithoutContext();
-
-      String username = (String)token.getPrincipal();
+      OidcAuthenticationToken token = getTokenWithoutContext();
+      OidcTokenUtils oidcTokenUtils = new OidcTokenUtils(token);
+      String username = oidcTokenUtils.getUserLoginId();
 
       String courseTitle = params.get("course-title");
       String courseCode = params.get("course-code");
@@ -239,7 +240,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       boolean errors = false;
 
       // TODO pass course info in as a variable to not look it up again?
-      Course existingCourse = coursesApi.getCourse(editId);
+      Course existingCourse = courseService.getCourse(editId);
       boolean courseUpdate = false;
       String existingCourseName = existingCourse.getName();
       String existingCourseCode = existingCourse.getCourseCode();
@@ -260,7 +261,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          }
 
          if (newCourseSisId) {
-            Course existingCourseLookup = coursesApi.getCourse("sis_course_id:" + sisCourseId);
+            Course existingCourseLookup = courseService.getCourse("sis_course_id:" + sisCourseId);
 
             if (existingCourseLookup != null) {
                errors = true;
@@ -295,12 +296,12 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
          if (readyToUpdateSection) {
             boolean sectionUpdate = false;
-            Section existingSection = sectionsApi.getSection(sectionId);
+            Section existingSection = sectionService.getSection(sectionId);
             String existingSectionName = existingSection.getName();
             String existingSisSectionId = "";
 
-            if (existingSection.getSisSectionId() != null) {
-               existingSisSectionId = existingSection.getSisSectionId();
+            if (existingSection.getSis_section_id() != null) {
+               existingSisSectionId = existingSection.getSis_section_id();
             }
 
             if (!existingSectionName.equals(name) || !existingSisSectionId.equals(sisSectionId)) {
@@ -311,7 +312,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
             if (sectionUpdate) {
                // if it's an empty string, don't bother with error checking
                if (!sisSectionId.equals("")) {
-                  Section section = sectionsApi.getSection("sis_section_id:" + sisSectionId);
+                  Section section = sectionService.getSection("sis_section_id:" + sisSectionId);
 
                   if (section != null) {
                      // found something, let's make sure it didn't find itself before declaring it already in use
@@ -325,12 +326,12 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
 
                Section sectionToUpdate = new Section();
                sectionToUpdate.setId(sectionId);
-               sectionToUpdate.setSisSectionId(sisSectionId);
+               sectionToUpdate.setSis_section_id(sisSectionId);
                sectionToUpdate.setName(name);
 
                sectionWithSISCheck.setSection(sectionToUpdate);
                sectionWithSISCheck.setOldSectionName(existingSection.getName());
-               sectionWithSISCheck.setOldSectionSisId(existingSection.getSisSectionId());
+               sectionWithSISCheck.setOldSectionSisId(existingSection.getSis_section_id());
                sections.add(sectionWithSISCheck);
             }
 
@@ -357,7 +358,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          courseSectionUpdateWrapper.setName(courseTitle);
          courseSectionUpdateWrapper.setSisId(sisCourseId);
          courseSectionUpdateWrapper.setCourseCode(courseCode);
-         Course course = coursesApi.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
+         Course course = courseService.updateCourseNameAndSisCourseId(editId, courseSectionUpdateWrapper);
 
          // if this failed, return
          if (course == null) {
@@ -382,8 +383,8 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
       for (SectionWithSISCheck sectionWithSISCheck : sections) {
          CourseSectionUpdateWrapper courseSectionUpdateWrapper = new CourseSectionUpdateWrapper();
          courseSectionUpdateWrapper.setName(sectionWithSISCheck.getSection().getName());
-         courseSectionUpdateWrapper.setSisId(sectionWithSISCheck.getSection().getSisSectionId());
-         Section section = sectionsApi.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), courseSectionUpdateWrapper);
+         courseSectionUpdateWrapper.setSisId(sectionWithSISCheck.getSection().getSis_section_id());
+         Section section = sectionService.updateSectionNameAndSisCourseId(sectionWithSISCheck.getSection().getId(), courseSectionUpdateWrapper);
 
          // if this failed, go ahead and return
          if (section == null) {
@@ -398,7 +399,7 @@ public class CourseAttributeEditorToolController extends LtiAuthenticationTokenA
          audit.setOldSectionName(sectionWithSISCheck.getOldSectionName());
          audit.setNewSectionName(sectionWithSISCheck.getSection().getName());
          audit.setOldSectionSisId(sectionWithSISCheck.getOldSectionSisId());
-         audit.setNewSectionSisId(sectionWithSISCheck.getSection().getSisSectionId());
+         audit.setNewSectionSisId(sectionWithSISCheck.getSection().getSis_section_id());
          courseAttributeAuditLogRepository.save(audit);
       }
 

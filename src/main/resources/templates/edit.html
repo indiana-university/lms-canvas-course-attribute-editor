@@ -11,33 +11,33 @@
             <!-- main page -->
             <main>
                 <!-- alerts section -->
-                <div th:if="not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger rvt-m-top-sm" role="alertdialog" aria-labelledby="error-alert-title">
-                    <h1 class="rvt-alert__title" id="error-alert-title">There is a problem</h1>
-                    <ul class="rvt-plain-list">
+                <div th:if="not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" data-rvt-alert="error">
+                    <div class="rvt-alert__title" id="error-alert-title">There is a problem</div>
+                    <ul class="rvt-list-plain">
                         <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
                             <a th:if="${error == 'course-sis-id'}" href="#course-sis-id">The <strong>Course SIS ID</strong> is already in use in Canvas</a>
                             <a th:if="${error != 'course-sis-id'}" th:href="@{|#${error}|}">The <strong>Section SIS ID</strong> is already in use in Canvas</a>
                         </li>
                     </ul>
                 </div>
-                <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger rvt-m-top-sm" role="alertdialog" aria-labelledby="error-alert-title">
+                <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" data-rvt-alert="error">
                     <h1 class="rvt-alert__title" id="error-alert-title">Error</h1>
                     <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
                 </div>
                 <!-- rest of main content -->
-                <h1 class="rvt-ts-32 rvt-p-top-sm rvt-text-bold">Edit Course</h1>
+                <h1 class="rvt-ts-23 rvt-p-top-sm">Edit Course</h1>
                 <div class="rvt-p-top-sm">
                     <span>Fields containing official SIS IDs cannot be edited.</span>
                 </div>
                 <form id="form-edit-course" th:action="@{|/app/submit/${searchBox}|}" method="post">
-                    <fieldset>
-                        <legend class="rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Course Information</legend>
-                        <label for="course-title">Course Title</label>
-                        <input type="text" id="course-title" name="course-title" th:value="${overrideCourseTitle} ? ${overrideCourseTitle} : ${course.name}" />
-                        <label for="course-code" class="rvt-m-top-md">Course Code</label>
-                        <input type="text" id="course-code" name="course-code" th:value="${overrideCourseCode} ? ${overrideCourseCode} : ${course.courseCode}" />
-                        <label for="course-sis-id" class="rvt-m-top-md">Course SIS ID</label>
-                        <input type="text" id="course-sis-id" name="course-sis-id" th:value="${overrideSisCourseId} ? ${overrideSisCourseId} : ${course.sisCourseId}"
+                    <fieldset class="rvt-fieldset">
+                        <legend class="rvt-legend rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Course Information</legend>
+                        <label for="course-title" class="rvt-label">Course Title</label>
+                        <input type="text" id="course-title" name="course-title" class="rvt-text-input" th:value="${overrideCourseTitle} ? ${overrideCourseTitle} : ${course.name}" />
+                        <label for="course-code" class="rvt-label rvt-m-top-md">Course Code</label>
+                        <input type="text" id="course-code" name="course-code" class="rvt-text-input" th:value="${overrideCourseCode} ? ${overrideCourseCode} : ${course.courseCode}" />
+                        <label for="course-sis-id" class="rvt-label rvt-m-top-md">Course SIS ID</label>
+                        <input type="text" id="course-sis-id" name="course-sis-id" class="rvt-text-input" th:value="${overrideSisCourseId} ? ${overrideSisCourseId} : ${course.sisCourseId}"
                                th:classappend="${courseSisIdError} ? 'rvt-validation-danger'" th:aria-describedby="${courseSisIdError} ? 'course-sis-id-message'"
                                th:aria-invalid="${courseSisIdError} ? true" />
                         <div th:if="${courseSisIdError}" class="rvt-inline-alert rvt-inline-alert--danger">
@@ -54,9 +54,9 @@
                             </span>
                         </div>
                     </fieldset>
-                    <table>
-                        <fieldset>
-                            <legend class="rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Section Information</legend>
+                    <table class="rvt-table">
+                        <fieldset class="rvt-fieldset">
+                            <legend class="rvt-legend rvt-ts-20 rvt-p-top-lg rvt-p-bottom-sm">Section Information</legend>
                             <thead>
                             <tr>
                                 <th scope="col" id="section-name-header">Section Name</th>
@@ -66,12 +66,12 @@
                             <tbody>
                             <tr th:each="s : ${sections}">
                                 <th>
-                                    <input type="text" th:id="@{|section-name-${s.section.id}|}" th:name="@{|section-name-${s.section.id}|}" th:value="${s.section.name}"
+                                    <input type="text" class="rvt-text-input" th:id="@{|section-name-${s.section.id}|}" th:name="@{|section-name-${s.section.id}|}" th:value="${s.section.name}"
                                            aria-labelledby="section-name-header" th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}" />
                                 </th>
                                 <td>
-                                    <input type="text" th:id="@{|section-sis-id-${s.section.id}|}" th:name="@{|section-sis-id-${s.section.id}|}"
-                                           th:value="${s.section.sisSectionId}" aria-labelledby="section-sis-id-header"
+                                    <input type="text" class="rvt-text-input" th:id="@{|section-sis-id-${s.section.id}|}" th:name="@{|section-sis-id-${s.section.id}|}"
+                                           th:value="${s.section.sis_section_id}" aria-labelledby="section-sis-id-header"
                                            th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}"
                                            th:classappend="${s.alreadyInCanvas} ? 'rvt-validation-danger'"
                                            th:aria-describedby="${s.alreadyInCanvas} ? @{|section-sis-id-${s.section.id}-message|}"
@@ -97,11 +97,11 @@
                     <div class="rvt-m-top-md">
                         <button id="saveButton" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Save</span>
-                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                            <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
                         </button>
                         <button class="rvt-button rvt-button--secondary" data-action="cancel" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Cancel</span>
-                            <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                            <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
                         </button>
                         <input id="caeSubmit" type="hidden" name="action" />
                     </div>

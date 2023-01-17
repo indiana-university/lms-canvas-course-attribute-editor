@@ -1,0 +1,28 @@
+{
+  "title": "Course Attribute Editor",
+  "description": "This tool allows administrators to view the identity attributes (including the SIS IDs) of any Canvas course and to edit the attributes of non-SIS courses and sections.",
+  "oidc_initiation_url": "http://localhost:8080/lti/login_initiation/lms_lti_course_attribute_editor",
+  "target_link_uri": "http://localhost:8080/app/launch",
+  "extensions": [
+    {
+      "domain": "localhost",
+      "platform": "canvas.instructure.com",
+      "privacy_level": "public",
+      "not_selectable": true,
+      "settings": {
+        "placements": [
+          {
+            "enabled": true,
+            "placement": "account_navigation",
+            "message_type": "LtiResourceLinkRequest"
+          }
+        ]
+      }
+    }
+  ],
+  "public_jwk_url": "http://localhost:8080/.well-known/jwks.json",
+  "custom_fields": {
+    "instructure_membership_roles": "$com.Instructure.membership.roles",
+    "canvas_user_login_id": "$Canvas.user.loginId"
+  }
+}

@@ -9,7 +9,7 @@ function buttonLoading(button) {
         buttonsToDisable[i].disabled = true;
     }
     button.classList.add("rvt-button--loading");
-    button.getElementsByTagName('div')[0].classList.remove("hideMe");
+    button.getElementsByTagName('div')[0].classList.remove("rvt-display-none");
 
     // FF doesn't need this, but Chrome and Edge do
     button.form.submit();
