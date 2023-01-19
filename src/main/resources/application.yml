@@ -24,10 +24,6 @@ spring:
     password: ${lms.db.password}
     type: ${lms.db.poolType}
   cloud.vault.enabled: false
-  servlet:
-    multipart:
-      max-file-size: -1
-      max-request-size: -1
   security:
     oauth2:
       resourceserver:
