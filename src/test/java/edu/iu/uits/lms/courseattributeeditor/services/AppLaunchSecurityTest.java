@@ -63,9 +63,6 @@ public class AppLaunchSecurityTest {
    @Autowired
    private MockMvc mvc;
 
-//   @MockBean
-//   private SudsApi sudsApi;
-
    @MockBean
    private DeptProvisioningUser deptProvisioningUser;
 
