@@ -1,4 +1,37 @@
 <!DOCTYPE html>
+<!--
+  #%L
+  course-attribute-editor
+  %%
+  Copyright (C) 2023 Indiana University
+  %%
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  3. Neither the name of the Indiana University nor the names of its contributors
+     may be used to endorse or promote products derived from this software without
+     specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
+  #L%
+  -->
+
 <html lang="en-US"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
@@ -8,29 +41,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/jsrivet/rivet-bundle.min.css}" />
+    <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/jsrivet/rivet.min.css}" />
     <link media="all" rel="stylesheet" type="text/css" th:href="@{/app/css/course-attribute-editor.css}"/>
 </head>
 <body>
 
-<div id="main-container" class="rvt-container">
+<div id="main-container" class="rvt-container-xl" aria-labelledby="caeTitle">
     <div class="widthLimit">
         <!-- banner -->
         <header role="banner">
             <form th:action="@{|/app/find|}" method="post">
-                <div class="rvt-p-tb-sm"><span class="rvt-ts-23">Course Attribute Editor</span></div>
-                <label for="searchBox">Canvas Course ID</label>
+                <div class="rvt-p-tb-sm"><span class="rvt-ts-26">Course Attribute Editor</span></div>
+                <label for="searchBox" class="rvt-label rvt-sr-only">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
                         <div class="rvt-input-group">
-                            <input class="rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
+                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
                                    th:aria-invalid="${blankSearch} ? true" />
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
                                     <span class="rvt-button__content">Find</span>
-                                    <div class="rvt-loader rvt-loader--xs hideMe" aria-label="Content loading"></div>
+                                    <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
                                 </button>
                             </div>
                         </div>
@@ -67,13 +100,16 @@
     </div>
 </div>
 
-<footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container rvt-m-top-lg">
+<footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container-xl rvt-m-top-lg">
     <div id="footer" th:text="${@serverInfo}"></div>
 </footer>
 
-<script type="text/javascript" th:src="@{/app/jsrivet/rivet-bundle.min.js}"></script>
+<script type="text/javascript" th:src="@{/app/jsrivet/rivet.min.js}"></script>
 <script type="text/javascript" th:src="@{/app/webjars/jquery/jquery.min.js}"></script>
 <script type="text/javascript" th:src="@{/app/js/course-attribute-editor.js}"></script>
+<script>
+  Rivet.init();
+</script>
 
 <th:block layout:fragment="script">
     <!--
