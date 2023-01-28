@@ -41,8 +41,7 @@ import edu.iu.uits.lms.canvas.services.SectionService;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
-import edu.iu.uits.lms.iuonly.model.SudsCourse;
-import edu.iu.uits.lms.iuonly.services.SudsServiceImpl;
+import edu.iu.uits.lms.iuonly.services.SisServiceImpl;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.controller.OidcTokenAwareController;
 import edu.iu.uits.lms.lti.service.OidcTokenUtils;
@@ -79,7 +78,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
    private SectionService sectionService;
 
    @Autowired
-   private SudsServiceImpl sudsService;
+   private SisServiceImpl sisService;
 
    @Autowired
    private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
@@ -123,15 +122,28 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          model.addAttribute("sections", sections);
 
          if (course.getSisCourseId() != null) {
-            // check Suds to see if this is a legit course
-            SudsCourse sudsCourse = sudsService.getSudsCourseBySiteId(course.getSisCourseId());
-            if (sudsCourse != null) {
+            // check Sis to see if this is a legit course
+            String sisTermId = "";
+
+            try {
+               sisTermId = course.getTerm().getSisTermId();
+            } catch (Exception e) {
+               // nothing to throw really. If the term or sisTermId is null or empty, then make this editable
+            }
+
+            boolean isSis = false;
+
+            if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null)
+            {
+               isSis = sisService.isLegitSisCourse(course.getSisCourseId(), sisTermId);
+            }
+
+            if (isSis) {
                // we have a match, so this course is not editable
                model.addAttribute("editable", false);
             } else {
-               // check archive table
-               SudsCourse sudsCourseArchive = sudsService.getSudsArchiveCourseBySiteId(course.getSisCourseId());
-               model.addAttribute("editable", sudsCourseArchive == null);
+               // no match, so course is editable
+               model.addAttribute("editable", true);
             }
          } else {
             // this does not have a sis course id, therefore it is editable
@@ -167,16 +179,20 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       // code to lookup search criteria
       Course course = courseService.getCourse(editId);
 
-      // check Suds to see if this is a legit course / keep users from cheating into this call
+      // check Sis to see if this is a legit course / keep users from cheating into this call
       boolean editable = true;
-      SudsCourse sudsCourse = sudsService.getSudsCourseBySiteId(course.getSisCourseId());
-      if (sudsCourse != null) {
-         // we have a match, so this course is not editable
-         editable = false;
-      } else {
-         // check archive table
-         SudsCourse sudsCourseArchive = sudsService.getSudsArchiveCourseBySiteId(course.getSisCourseId());
-         editable = (sudsCourseArchive == null);
+
+      String sisTermId = "";
+
+      try {
+         sisTermId = course.getTerm().getSisTermId();
+      } catch (Exception e) {
+         // nothing to throw really. If the term or sisTermId is null or empty, then make this editable
+      }
+
+      if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null)
+      {
+         editable = !sisService.isLegitSisCourse(course.getSisCourseId(), sisTermId);
       }
 
       if (!editable) {
@@ -197,17 +213,12 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
 
       for (Section section : listOfSections) {
          SectionWithSISCheck sectionWithSISCheck = new SectionWithSISCheck();
-         SudsCourse sudsSection = sudsService.getSudsCourseBySiteId(section.getSis_section_id());
+
          boolean isSisProvisioned = false;
-         if (sudsSection != null) {
+
+         if (sisTermId != null && !sisTermId.isEmpty() && section.getSis_section_id() != null) {
             // we have a match, so this section is not editable
-            isSisProvisioned = true;
-         } else {
-            SudsCourse sudsSectionArchive = sudsService.getSudsArchiveCourseBySiteId(section.getSis_section_id());
-            if (sudsSectionArchive != null) {
-               // we have a match, so this section is not editable
-               isSisProvisioned = true;
-            }
+            isSisProvisioned = sisService.isLegitSisCourse(section.getSis_section_id(), sisTermId);
          }
 
          // check for overrides since there will be errors to include
