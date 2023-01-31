@@ -133,8 +133,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
 
             boolean isSis = false;
 
-            if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null)
-            {
+            if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null) {
                isSis = sisService.isLegitSisCourse(course.getSisCourseId(), sisTermId);
             }
 
