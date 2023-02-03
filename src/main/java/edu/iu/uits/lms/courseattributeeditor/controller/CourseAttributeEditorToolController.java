@@ -123,18 +123,10 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
 
          if (course.getSisCourseId() != null) {
             // check Sis to see if this is a legit course
-            String sisTermId = "";
-
-            try {
-               sisTermId = course.getTerm().getSisTermId();
-            } catch (Exception e) {
-               // nothing to throw really. If the term or sisTermId is null or empty, then make this editable
-            }
-
             boolean isSis = false;
 
-            if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null) {
-               isSis = sisService.isLegitSisCourse(course.getSisCourseId(), sisTermId);
+            if (course.getSisCourseId() != null) {
+               isSis = sisService.isLegitSisCourse(course.getSisCourseId());
             }
 
             if (isSis) {
@@ -181,17 +173,8 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       // check Sis to see if this is a legit course / keep users from cheating into this call
       boolean editable = true;
 
-      String sisTermId = "";
-
-      try {
-         sisTermId = course.getTerm().getSisTermId();
-      } catch (Exception e) {
-         // nothing to throw really. If the term or sisTermId is null or empty, then make this editable
-      }
-
-      if (sisTermId != null && !sisTermId.isEmpty() && course.getSisCourseId() != null)
-      {
-         editable = !sisService.isLegitSisCourse(course.getSisCourseId(), sisTermId);
+      if (course.getSisCourseId() != null) {
+         editable = !sisService.isLegitSisCourse(course.getSisCourseId());
       }
 
       if (!editable) {
@@ -215,9 +198,9 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
 
          boolean isSisProvisioned = false;
 
-         if (sisTermId != null && !sisTermId.isEmpty() && section.getSis_section_id() != null) {
+         if (section.getSis_section_id() != null) {
             // we have a match, so this section is not editable
-            isSisProvisioned = sisService.isLegitSisCourse(section.getSis_section_id(), sisTermId);
+            isSisProvisioned = sisService.isLegitSisCourse(section.getSis_section_id());
          }
 
          // check for overrides since there will be errors to include
