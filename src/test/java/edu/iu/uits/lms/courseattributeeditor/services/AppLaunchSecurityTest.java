@@ -37,6 +37,7 @@ import edu.iu.uits.lms.canvas.config.CanvasClientTestConfig;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
 import edu.iu.uits.lms.iuonly.jarexport.IuClientTestConfig;
 import edu.iu.uits.lms.iuonly.model.DeptProvisioningUser;
+import edu.iu.uits.lms.iuonly.services.SisServiceImpl;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.config.LtiClientTestConfig;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
@@ -68,6 +69,9 @@ public class AppLaunchSecurityTest {
 
    @MockBean
    private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;
+
+   @MockBean
+   private SisServiceImpl sisService;
 
    @Test
    public void appNoAuthnLaunch() throws Exception {

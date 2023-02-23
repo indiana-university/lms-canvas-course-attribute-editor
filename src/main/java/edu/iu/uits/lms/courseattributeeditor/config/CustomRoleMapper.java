@@ -82,7 +82,7 @@ public class CustomRoleMapper extends LmsDefaultGrantedAuthoritiesMapper {
             roles.add(rolesString);
 
             // add the current roles to the string check. If it's one of our default roles, then it's cool
-            roles.addAll(List.of(oidcTokenUtils.getRoles()));
+            roles.addAll(List.of(oidcTokenUtils.getCustomInstructureMembershipRoles()));
 
             String userRoles[] = roles.toArray(new String[roles.size()]);
 
