@@ -13,7 +13,7 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.1</version>
     <description>This tool allows administrators to view the identity attributes (including the SIS IDs) of any Canvas course and to edit the attributes of non-SIS courses and sections.</description>
     <url>https://github.com/indiana-university/lms-canvas-course-attribute-editor</url>
     <inceptionYear>2023</inceptionYear>
@@ -62,7 +62,7 @@
         <connection>scm:git:https://github.com/indiana-university/lms-canvas-course-attribute-editor.git</connection>
         <developerConnection>scm:git:https://github.com/indiana-university/lms-canvas-course-attribute-editor.git</developerConnection>
         <url>https://github.com/indiana-university/lms-canvas-course-attribute-editor</url>
-        <tag>HEAD</tag>
+        <tag>course-attribute-editor-5.0.1</tag>
     </scm>
 
     <properties>
