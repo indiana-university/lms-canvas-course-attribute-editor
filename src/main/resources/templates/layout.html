@@ -52,18 +52,22 @@
         <header role="banner">
             <form th:action="@{|/app/find|}" method="post">
                 <div class="rvt-p-tb-sm"><span class="rvt-ts-26">Course Attribute Editor</span></div>
-                <label for="searchBox" class="rvt-label rvt-sr-only">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
+                        <label for="searchBox">Canvas Course ID</label>
                         <div class="rvt-input-group">
                             <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
-                                   th:aria-invalid="${blankSearch} ? true" />
+                                   th:aria-invalid="${blankSearch} ? true"
+                                   required />
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
                                     <span class="rvt-button__content">Find</span>
-                                    <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
+                                    <span id="find-loader" class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                                    <span aria-live="polite">
+                                        <span id="find-loader-text" class="rvt-sr-only rvt-display-none">Loading course details</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -77,7 +81,7 @@
                                 </svg>
                             </span>
                             <span class="rvt-inline-alert__message" id="blank-search-message">
-                                Please enter a Canvas Course ID before clicking Find.
+                                Canvas Course ID is required.
                             </span>
                         </div>
                     </div>
