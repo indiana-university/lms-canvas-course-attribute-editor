@@ -59,7 +59,9 @@
                             <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
-                                   th:aria-invalid="${blankSearch} ? true" />
+                                   th:aria-invalid="${blankSearch} ? true"
+                                   th:required="required"
+                                   th:autofocus="${blankSearch} ? 'autofocus'" />
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
                                     <span class="rvt-button__content">Find</span>
@@ -77,7 +79,7 @@
                                 </svg>
                             </span>
                             <span class="rvt-inline-alert__message" id="blank-search-message">
-                                Please enter a Canvas Course ID before clicking Find.
+                                Canvas Course ID is required.
                             </span>
                         </div>
                     </div>
