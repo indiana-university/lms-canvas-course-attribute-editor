@@ -84,16 +84,6 @@
                 </div>
             </form>
         </header>
-        <!-- breadcrumb -->
-        <div class="rvt-p-bottom-md rvt-border-bottom" th:if="${breadcrumb}"></div>
-        <nav role="navigation" aria-label="Breadcrumbs" th:if="${breadcrumb}">
-            <ol class="rvt-breadcrumbs rvt-p-top-md">
-                <li><a th:href="@{|/app/index|}">Course Attribute Editor</a></li>
-                <li th:if="${tier2breadcrumb}" aria-current="page" th:text="${pageTitle}">Canvas Course ID: 123456</li>
-                <li th:if="${tier3breadcrumb}"><a th:href="@{|/app/find/${searchBox}|}" th:text="@{|Canvas Course ID: ${searchBox}|}">Canvas Course ID: 123456</a></li>
-                <li th:if="${tier3breadcrumb}" aria-current="page" th:text="${pageTitle}">Edit Course</li>
-            </ol>
-        </nav>
 
         <div layout:fragment="content">
         </div>
