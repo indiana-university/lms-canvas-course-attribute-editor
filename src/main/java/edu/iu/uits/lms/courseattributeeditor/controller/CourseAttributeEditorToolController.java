@@ -143,6 +143,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       } else {
          model.addAttribute("pageTitle", "Canvas Course not found");
          model.addAttribute("displayNotFound", true);
+         model.addAttribute("breadcrumb", false);
       }
 
       return new ModelAndView("index");
