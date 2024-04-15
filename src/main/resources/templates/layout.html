@@ -46,57 +46,49 @@
 </head>
 <body>
 
-<div id="main-container" role="main" class="rvt-container-xl" aria-labelledby="page-title">
+<main id="main-container" class="rvt-container-xl" aria-labelledby="page-title">
     <div class="widthLimit">
         <h1 id="page-title" class="rvt-p-tb-sm rvt-ts-26">Course Attribute Editor</h1>
 
-        <form th:action="@{|/app/find|}" method="post">
-            <label for="searchBox" class="rvt-label">Canvas Course ID</label>
-            <div class="rvt-flex">
-                <div class="rvt-m-right-sm">
-                    <div class="rvt-input-group">
-                        <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
+        <div role="region" aria-label="Find Course by Canvas Course ID">
+            <form th:action="@{|/app/find|}" method="post">
+                <label for="searchBox" class="rvt-label">Canvas Course ID</label>
+                <div class="rvt-flex">
+                    <div class="rvt-m-right-sm">
+                        <div class="rvt-input-group">
+                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
                                    th:aria-invalid="${blankSearch} ? true" />
-                        <div class="rvt-input-group__append">
-                            <button class="rvt-button" onclick="buttonLoading(this)">
-                                <span class="rvt-button__content">Find</span>
-                                <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
-                            </button>
+                            <div class="rvt-input-group__append">
+                                <button class="rvt-button" onclick="buttonLoading(this)">
+                                    <span class="rvt-button__content">Find</span>
+                                    <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">
+                            <span class="rvt-inline-alert__icon">
+                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                    <g fill="currentColor">
+                                        <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z" />
+                                        <path d="M10.83,5.17a1,1,0,0,0-1.41,0L8,6.59,6.59,5.17A1,1,0,0,0,5.17,6.59L6.59,8,5.17,9.41a1,1,0,1,0,1.41,1.41L8,9.41l1.41,1.41a1,1,0,0,0,1.41-1.41L9.41,8l1.41-1.41A1,1,0,0,0,10.83,5.17Z"/>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span class="rvt-inline-alert__message" id="blank-search-message">
+                                Please enter a Canvas Course ID before clicking Find.
+                            </span>
                         </div>
                     </div>
-                    <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">
-                        <span class="rvt-inline-alert__icon">
-                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                                <g fill="currentColor">
-                                    <path d="M8,0a8,8,0,1,0,8,8A8,8,0,0,0,8,0ZM8,14a6,6,0,1,1,6-6A6,6,0,0,1,8,14Z" />
-                                    <path d="M10.83,5.17a1,1,0,0,0-1.41,0L8,6.59,6.59,5.17A1,1,0,0,0,5.17,6.59L6.59,8,5.17,9.41a1,1,0,1,0,1.41,1.41L8,9.41l1.41,1.41a1,1,0,0,0,1.41-1.41L9.41,8l1.41-1.41A1,1,0,0,0,10.83,5.17Z"/>
-                                </g>
-                            </svg>
-                        </span>
-                        <span class="rvt-inline-alert__message" id="blank-search-message">
-                                Please enter a Canvas Course ID before clicking Find.
-                        </span>
-                    </div>
                 </div>
-            </div>
-        </form>
-
-        <!-- breadcrumb -->
-        <nav role="navigation" aria-label="Breadcrumbs" th:if="${breadcrumb}" class="rvt-p-bottom-md rvt-border-bottom">
-            <ol class="rvt-breadcrumbs rvt-p-top-md">
-                <li><a th:href="@{|/app/index|}">Course Attribute Editor</a></li>
-                <li th:if="${tier2breadcrumb}" aria-current="page" th:text="${pageTitle}">Canvas Course ID: 123456</li>
-                <li th:if="${tier3breadcrumb}"><a th:href="@{|/app/find/${searchBox}|}" th:text="@{|Canvas Course ID: ${searchBox}|}">Canvas Course ID: 123456</a></li>
-                <li th:if="${tier3breadcrumb}" aria-current="page" th:text="${pageTitle}">Edit Course</li>
-            </ol>
-        </nav>
+            </form>
+        </div>
 
         <div layout:fragment="content">
         </div>
     </div>
-</div>
+</main>
 
 <footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container-xl rvt-m-top-lg">
     <div id="footer" th:text="${@serverInfo}"></div>
