@@ -52,9 +52,9 @@
         <header role="banner">
             <form th:action="@{|/app/find|}" method="post">
                 <div class="rvt-p-tb-sm"><span class="rvt-ts-26">Course Attribute Editor</span></div>
+                <label for="searchBox" class="rvt-label">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
-                        <label for="searchBox">Canvas Course ID</label>
                         <div class="rvt-input-group">
                             <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
