@@ -46,12 +46,12 @@
 </head>
 <body>
 
-<div id="main-container" class="rvt-container-xl" aria-labelledby="caeTitle">
+<main id="main-container" class="rvt-container-xl" aria-labelledby="page-title">
     <div class="widthLimit">
-        <!-- banner -->
-        <header role="banner">
+        <h1 id="page-title" class="rvt-p-tb-sm rvt-ts-26">Course Attribute Editor</h1>
+
+        <div role="region" aria-label="Find Course by Canvas Course ID">
             <form th:action="@{|/app/find|}" method="post">
-                <div class="rvt-p-tb-sm"><span class="rvt-ts-26">Course Attribute Editor</span></div>
                 <label for="searchBox" class="rvt-label">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
@@ -89,12 +89,12 @@
                     </div>
                 </div>
             </form>
-        </header>
+        </div>
 
         <div layout:fragment="content">
         </div>
     </div>
-</div>
+</main>
 
 <footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container-xl rvt-m-top-lg">
     <div id="footer" th:text="${@serverInfo}"></div>
