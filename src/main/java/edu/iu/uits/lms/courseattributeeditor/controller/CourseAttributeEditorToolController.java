@@ -89,8 +89,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       log.debug("in /index");
       getTokenWithoutContext();
 
-      model.addAttribute("breadcrumb", false);
-
       return new ModelAndView("index");
    }
 
@@ -105,8 +103,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          return new ModelAndView("index");
       }
 
-      model.addAttribute("breadcrumb", true);
-      model.addAttribute("tier2breadcrumb", true);
       model.addAttribute("searchBox", searchBox);
 
       // code to lookup search criteria
@@ -182,8 +178,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          return find(model, request, editId);
       }
 
-      model.addAttribute("breadcrumb", true);
-      model.addAttribute("tier3breadcrumb", true);
       model.addAttribute("searchBox", editId);
       model.addAttribute("pageTitle", "Edit Course");
 
