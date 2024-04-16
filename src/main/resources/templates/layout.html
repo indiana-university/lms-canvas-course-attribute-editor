@@ -60,7 +60,9 @@
                                    th:classappend="${blankSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${blankSearch} ? 'blank-search-message'"
                                    th:aria-invalid="${blankSearch} ? true"
-                                   required />
+                                   th:required="required"
+                                   th:autofocus="${blankSearch} ? 'autofocus'" />
+
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
                                     <span class="rvt-button__content">Find</span>
