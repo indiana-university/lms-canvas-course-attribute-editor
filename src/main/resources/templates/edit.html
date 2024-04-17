@@ -129,11 +129,19 @@
                     <div class="rvt-m-top-md">
                         <button id="saveButton" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Save</span>
-                            <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
+                            <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                            <span aria-live="polite">
+                                <span class="loader-sr-text rvt-sr-only rvt-display-none">Saving your changes</span>
+                            </span>
+                        </span>
                         </button>
                         <button class="rvt-button rvt-button--secondary" data-action="cancel" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Cancel</span>
-                            <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
+                            <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                            <span aria-live="polite">
+                                <span class="loader-sr-text rvt-sr-only rvt-display-none">Cancelling changes</span>
+                            </span>
+                        </span>
                         </button>
                         <input id="caeSubmit" type="hidden" name="action" />
                     </div>

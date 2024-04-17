@@ -41,8 +41,8 @@ function buttonLoading(button) {
         buttonsToDisable[i].disabled = true;
     }
     button.classList.add("rvt-button--loading");
-    document.getElementById("find-loader").classList.remove("rvt-display-none");
-    document.getElementById("find-loader-text").classList.remove("rvt-display-none");
+    button.getElementsByClassName('rvt-loader')[0].classList.remove("rvt-display-none");
+    button.getElementsByClassName('loader-sr-text')[0].classList.remove("rvt-display-none");
 
     // FF doesn't need this, but Chrome and Edge do
     button.form.submit();

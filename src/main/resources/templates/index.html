@@ -62,7 +62,10 @@
                 <form th:if="${editable}" th:action="@{|/app/edit/${searchBox}|}" method="post">
                     <button type="submit" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
                         <span class="rvt-button__content">Edit</span>
-                        <div class="rvt-loader rvt-loader--xs rvt-display-none"></div>
+                        <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                        <span aria-live="polite">
+                            <span class="loader-sr-text rvt-sr-only rvt-display-none">Loading edit view</span>
+                        </span>
                     </button>
                 </form>
             </div>
