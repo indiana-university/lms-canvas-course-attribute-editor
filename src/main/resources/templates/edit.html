@@ -42,7 +42,8 @@
 <body>
     <div layout:fragment="content">
             <!-- main page -->
-            <div role="region" aria-label="Edit course attributes" class="rvt-m-top-md rvt-border-top">
+            <div id="edit-course-details" role="region" aria-label="Edit course attributes" class="rvt-m-top-md rvt-border-top"
+                 tabindex="-1" th:autofocus="autofocus">
                 <!-- alerts section -->
                 <div th:if="not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" data-rvt-alert="error">
                     <div class="rvt-alert__title" id="error-alert-title">There is a problem</div>

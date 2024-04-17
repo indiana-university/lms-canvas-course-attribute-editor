@@ -53,9 +53,8 @@
         </div>
         <!-- course content -->
 
-        <div th:if="${displayNotFound}" class="rvt-m-top-md" th:text="@{|Canvas Course ID &quot;${searchBox}&quot; does not exist.|}">Canvas Course ID "purposelyBadQuery" does not exist.</div>
-
-        <div th:if="${courseFound}" role="region" aria-label="Course attributes" class="rvt-m-top-md rvt-border-top">
+        <div th:if="${courseFound}" id="course-details" role="region" aria-label="Course attributes" class="rvt-m-top-md rvt-border-top"
+             tabindex="-1" th:autofocus="autofocus">
             <h2 id="caeTitle" class="rvt-ts-23 rvt-p-top-sm" th:text="${pageTitle}">main section title</h2>
 
             <div class="rvt-p-top-sm">

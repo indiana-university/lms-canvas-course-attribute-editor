@@ -43,3 +43,7 @@
 .errorAlignment {
     vertical-align: top;
 }
+
+#course-details:focus, #edit-course-details:focus {
+    outline: none;
+}

@@ -99,7 +99,8 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       getTokenWithoutContext();
 
       if (searchBox == null || searchBox.isEmpty()) {
-         model.addAttribute("blankSearch", true);
+         model.addAttribute("invalidSearch", true);
+         model.addAttribute("invalidSearchMsg", "Canvas Course ID is required.");
          return new ModelAndView("index");
       }
 
@@ -138,8 +139,8 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          }
       } else {
          model.addAttribute("pageTitle", "Canvas Course not found");
-         model.addAttribute("displayNotFound", true);
-         model.addAttribute("breadcrumb", false);
+         model.addAttribute("invalidSearch", true);
+         model.addAttribute("invalidSearchMsg", "Canvas Course ID \"" + searchBox + "\" does not exist.");
       }
 
       return new ModelAndView("index");

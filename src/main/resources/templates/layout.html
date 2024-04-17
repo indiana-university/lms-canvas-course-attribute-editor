@@ -57,11 +57,11 @@
                     <div class="rvt-m-right-sm">
                         <div class="rvt-input-group">
                             <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
-                                   th:classappend="${blankSearch} ? 'rvt-validation-danger'"
-                                   th:aria-describedby="${blankSearch} ? 'blank-search-message'"
-                                   th:aria-invalid="${blankSearch} ? true"
+                                   th:classappend="${invalidSearch} ? 'rvt-validation-danger'"
+                                   th:aria-describedby="${invalidSearch} ? invalid-search-msg"
+                                   th:aria-invalid="${invalidSearch} ? true"
                                    th:required="required"
-                                   th:autofocus="${blankSearch} ? 'autofocus'" />
+                                   th:autofocus="${invalidSearch} ? 'autofocus'" />
 
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
@@ -73,7 +73,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">
+                        <div class="rvt-inline-alert rvt-inline-alert--danger rvt-p-top-xs" th:if="${invalidSearch}">
                             <span class="rvt-inline-alert__icon">
                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                     <g fill="currentColor">
@@ -82,7 +82,7 @@
                                     </g>
                                 </svg>
                             </span>
-                            <span class="rvt-inline-alert__message" id="blank-search-message">
+                            <span class="rvt-inline-alert__message" id="invalid-search-msg" th:text="${invalidSearchMsg}">
                                 Canvas Course ID is required.
                             </span>
                         </div>
