@@ -234,7 +234,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       String caeFocus = CourseAttributeEditorConstants.EDIT_SECTION;
       if (model.containsAttribute("alreadyInUseList")) {
          caeFocus = CourseAttributeEditorConstants.EXISTS_ERROR;
-      } else if (model.containsAttribute(CourseAttributeEditorConstants.CANVAS_ERROR)) {
+      } else if (model.containsAttribute("canvasError")) {
          caeFocus = CourseAttributeEditorConstants.CANVAS_ERROR;
       }
 
