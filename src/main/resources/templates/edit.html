@@ -42,11 +42,11 @@
 <body>
     <div layout:fragment="content">
             <!-- main page -->
-            <div id="edit-course-details" role="region" aria-label="Edit course attributes" class="rvt-m-top-md rvt-border-top"
+            <div id="edit-course-details" role="region" aria-labelledby="edit-course" class="rvt-m-top-md rvt-border-top"
                  tabindex="-1" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).EDIT_SECTION}">
 
                 <!-- rest of main content -->
-                <h2 class="rvt-ts-23 rvt-p-top-sm">Edit Course</h2>
+                <h2 id="edit-course" class="rvt-ts-23 rvt-p-top-sm">Edit Course</h2>
                 <div class="rvt-p-top-sm">
                     <span>Fields containing official SIS IDs cannot be edited.</span>
                 </div>
