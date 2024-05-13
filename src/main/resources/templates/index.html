@@ -41,37 +41,30 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <!-- alerts section -->
-        <div th:if="${updateSuccess}" class="rvt-alert rvt-alert--success [ rvt-m-top-sm ]" role="alert" aria-labelledby="success-alert-title" data-rvt-alert="success">
-            <div class="rvt-alert__title" id="success-alert-title">Course saved</div>
-            <button type="button" class="rvt-alert__dismiss" data-rvt-alert-close>
-                <span class="rvt-sr-only">Close</span>
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                    <path fill="currentColor" d="M9.41,8l5.29-5.29a1,1,0,0,0-1.41-1.41L8,6.59,2.71,1.29A1,1,0,0,0,1.29,2.71L6.59,8,1.29,13.29a1,1,0,1,0,1.41,1.41L8,9.41l5.29,5.29a1,1,0,0,0,1.41-1.41Z"></path>
-                </svg>
-            </button>
-        </div>
+
         <!-- course content -->
 
-        <div th:if="${courseFound}" id="course-details" role="region" aria-label="Course attributes" class="rvt-m-top-md rvt-border-top"
-             tabindex="-1" th:autofocus="autofocus">
-            <h2 id="caeTitle" class="rvt-ts-23 rvt-p-top-sm" th:text="${pageTitle}">main section title</h2>
-
-            <div class="rvt-p-top-sm">
-                <span th:if="!${editable}">The course and its section(s) were provisioned by SIS. No values are editable.</span>
-                <form th:if="${editable}" th:action="@{|/app/edit/${searchBox}|}" method="post">
-                    <button type="submit" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
-                        <span class="rvt-button__content">Edit</span>
-                        <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
-                        <span aria-live="polite">
-                            <span class="loader-sr-text rvt-sr-only rvt-display-none">Loading edit view</span>
-                        </span>
-                    </button>
-                </form>
+        <div th:if="${courseFound}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).DETAILS_SECTION}" role="region" aria-label="Course attributes" class="rvt-m-top-md rvt-border-top"
+             tabindex="-1">
+            <div class="rvt-flex rvt-p-top-sm">
+                <h2 id="caeTitle" class="rvt-ts-23 rvt-m-top-xxs" th:text="${pageTitle}">main section title</h2>
+                <div class="rvt-m-left-md">
+                    <form th:if="${editable}" th:action="@{|/app/edit/${searchBox}|}" method="post">
+                        <button type="submit" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
+                            <span class="rvt-button__content">Edit</span>
+                            <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                            <span aria-live="polite">
+                                <span class="loader-sr-text rvt-sr-only rvt-display-none">Loading edit view</span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
             </div>
 
+            <div th:if="!${editable}" class="rvt-p-top-sm">The course and its section(s) were provisioned by SIS. No values are editable.</div>
+
             <table class="rvt-table-cells">
-                <caption class="rvt-ts-20 rvt-text-left rvt-p-top-lg rvt-p-bottom-sm">Course Information</caption>
+                <caption class="rvt-ts-20 rvt-text-left rvt-p-top-md rvt-p-bottom-sm">Course Information</caption>
                 <tbody>
                 <tr>
                     <th scope="row" class="rowHeader">Canvas Course ID</th>
@@ -102,7 +95,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="section : ${sections}">
-                    <th th:text="${section.name}">SU21-BL-AAAD-A132-7365</th>
+                    <td th:text="${section.name}">SU21-BL-AAAD-A132-7365</td>
                     <td th:text="${section.sis_section_id}">SU21-BL-AAAD-A132-7365</td>
                 </tr>
                 </tbody>

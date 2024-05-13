@@ -48,20 +48,51 @@
 
 <main id="main-container" class="rvt-container-xl" aria-labelledby="page-title">
     <div class="widthLimit">
+
+        <!-- alerts section -->
+        <div th:if="${updateSuccess}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SAVE_SUCCESS}"
+             class="rvt-alert rvt-alert--success [ rvt-m-top-sm ]" role="alert" aria-labelledby="success-alert-title" data-rvt-alert="success" tabindex="-1">
+            <div class="rvt-alert__title" id="success-alert-title">Success</div>
+            <p class="rvt-alert__message" th:text="|Course with Canvas Course ID ${course.id} was saved.|">Course saved.</p>
+            <button type="button" class="rvt-alert__dismiss" data-rvt-alert-close>
+                <span class="rvt-sr-only">Close</span>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path fill="currentColor" d="M9.41,8l5.29-5.29a1,1,0,0,0-1.41-1.41L8,6.59,2.71,1.29A1,1,0,0,0,1.29,2.71L6.59,8,1.29,13.29a1,1,0,1,0,1.41,1.41L8,9.41l5.29,5.29a1,1,0,0,0,1.41-1.41Z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div th:if="${alreadyInUseList} and not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]"
+             role="alert" aria-labelledby="existing-id-error-title" data-rvt-alert="error" tabindex="-1"
+             th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).EXISTS_ERROR}">
+            <div class="rvt-alert__title" id="existing-id-error-title">Error</div>
+            <ul class="rvt-list-plain">
+                <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
+                    <a th:if="${error == 'course-sis-id'}" href="#course-sis-id">The <strong>Course SIS ID</strong> is already in use in Canvas.</a>
+                    <a th:if="${error != 'course-sis-id'}" th:href="@{|#${error}|}">The <strong>Section SIS ID</strong> is already in use in Canvas.</a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" tabindex="-1"
+             data-rvt-alert="error" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).CANVAS_ERROR}">
+            <div class="rvt-alert__title" id="error-alert-title">Error</div>
+            <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
+        </div>
+
         <h1 id="page-title" class="rvt-p-tb-sm rvt-ts-26">Course Attribute Editor</h1>
 
         <div role="region" aria-label="Find Course by Canvas Course ID">
             <form th:action="@{|/app/find|}" method="post">
-                <label for="searchBox" class="rvt-label rvt-ts-16">Canvas Course ID</label>
+                <label th:for="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SEARCH_INPUT}" class="rvt-label rvt-ts-16">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
                         <div class="rvt-input-group">
-                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
+                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" name="searchBox" th:value="${searchBox}"
+                                   th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SEARCH_INPUT}"
                                    th:classappend="${invalidSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${invalidSearch} ? invalid-search-msg"
                                    th:aria-invalid="${invalidSearch} ? true"
-                                   th:required="required"
-                                   th:autofocus="${invalidSearch} ? 'autofocus'" />
+                                   th:required="required" />
 
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
@@ -90,6 +121,8 @@
                 </div>
             </form>
         </div>
+
+        <input type="hidden" id="cae-focus" th:value="${caeFocus}" />
 
         <div layout:fragment="content">
         </div>

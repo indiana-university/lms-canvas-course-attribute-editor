@@ -44,6 +44,6 @@
     vertical-align: top;
 }
 
-#course-details:focus, #edit-course-details:focus {
+#course-details:focus, #course-edit:focus {
     outline: none;
 }

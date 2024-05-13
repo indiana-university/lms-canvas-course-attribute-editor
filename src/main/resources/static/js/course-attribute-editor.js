@@ -47,3 +47,13 @@ function buttonLoading(button) {
     // FF doesn't need this, but Chrome and Edge do
     button.form.submit();
 }
+
+jQuery(document).ready(function($) {
+    let caeFocus = $("#cae-focus").val();
+    if (caeFocus) {
+        let focusTarget = document.getElementById(caeFocus);
+        if (focusTarget) {
+            focusTarget.focus();
+        }
+    }
+});

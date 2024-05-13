@@ -43,21 +43,8 @@
     <div layout:fragment="content">
             <!-- main page -->
             <div id="edit-course-details" role="region" aria-label="Edit course attributes" class="rvt-m-top-md rvt-border-top"
-                 tabindex="-1" th:autofocus="autofocus">
-                <!-- alerts section -->
-                <div th:if="not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" data-rvt-alert="error">
-                    <div class="rvt-alert__title" id="error-alert-title">There is a problem</div>
-                    <ul class="rvt-list-plain">
-                        <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
-                            <a th:if="${error == 'course-sis-id'}" href="#course-sis-id">The <strong>Course SIS ID</strong> is already in use in Canvas</a>
-                            <a th:if="${error != 'course-sis-id'}" th:href="@{|#${error}|}">The <strong>Section SIS ID</strong> is already in use in Canvas</a>
-                        </li>
-                    </ul>
-                </div>
-                <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" data-rvt-alert="error">
-                    <h1 class="rvt-alert__title" id="error-alert-title">Error</h1>
-                    <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
-                </div>
+                 tabindex="-1" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).EDIT_SECTION}">
+
                 <!-- rest of main content -->
                 <h2 class="rvt-ts-23 rvt-p-top-sm">Edit Course</h2>
                 <div class="rvt-p-top-sm">
@@ -88,28 +75,25 @@
                             </span>
                         </div>
                     </fieldset>
-                    <table class="rvt-table">
-                        <caption class="rvt-ts-20 rvt-text-left rvt-p-top-lg rvt-p-bottom-sm">Section Information</caption>
-                        <thead>
-                        <tr>
-                            <th scope="col" id="section-name-header">Section Name</th>
-                            <th scope="col" id="section-sis-id-header">Section SIS ID</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="s : ${sections}">
-                            <th>
+
+                    <fieldset class="rvt-fieldset">
+                        <legend class="rvt-legend rvt-ts-20 rvt-p-top-lg">Section Information</legend>
+                        <div th:each="s,iterStat : ${sections}" class="rvt-row rvt-border-bottom rvt-p-bottom-md">
+                            <div class="rvt-cols-6-md">
+                                <label th:for="@{|section-name-${s.section.id}|}" class="rvt-label rvt-m-top-sm" th:text="@{|Section ${iterStat.count} Name|}">Section Name</label>
                                 <input type="text" class="rvt-text-input" th:id="@{|section-name-${s.section.id}|}" th:name="@{|section-name-${s.section.id}|}" th:value="${s.section.name}"
-                                       aria-labelledby="section-name-header" th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}" />
-                            </th>
-                            <td>
+                                       th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}" />
+                            </div>
+                            <div class="rvt-cols-6-md">
+                                <label th:for="@{|section-sis-id-${s.section.id}|}" class="rvt-label rvt-m-top-sm" th:text="@{|Section ${iterStat.count} SIS ID|}">Section SIS ID</label>
                                 <input type="text" class="rvt-text-input" th:id="@{|section-sis-id-${s.section.id}|}" th:name="@{|section-sis-id-${s.section.id}|}"
-                                       th:value="${s.section.sis_section_id}" aria-labelledby="section-sis-id-header"
-                                       th:disabled="${s.sisProvisioned}" th:aria-disabled="${s.sisProvisioned}"
+                                       th:value="${s.section.sis_section_id}"
+                                       th:disabled="${s.sisProvisioned}"
+                                       th:aria-disabled="${s.sisProvisioned}"
                                        th:classappend="${s.alreadyInCanvas} ? 'rvt-validation-danger'"
                                        th:aria-describedby="${s.alreadyInCanvas} ? @{|section-sis-id-${s.section.id}-message|}"
                                        th:aria-invalid="${s.alreadyInCanvas} ? true" />
-                                <div th:if="${s.alreadyInCanvas}" class="rvt-inline-alert rvt-inline-alert--danger">
+                                <div th:if="${s.alreadyInCanvas}" class="rvt-inline-alert rvt-inline-alert&#45;&#45;danger">
                                     <span class="rvt-inline-alert__icon">
                                         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                             <g fill="currentColor">
@@ -122,10 +106,10 @@
                                         The <strong>Section SIS ID</strong> is already in use in Canvas.
                                     </span>
                                 </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                    </fieldset>
+
                     <div class="rvt-m-top-md">
                         <button id="saveButton" class="rvt-button rvt-m-right-xs" onclick="buttonLoading(this)">
                             <span class="rvt-button__content">Save</span>
