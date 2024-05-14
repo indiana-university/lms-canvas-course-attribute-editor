@@ -43,9 +43,8 @@
     <div layout:fragment="content">
 
         <!-- course content -->
-
-        <div th:if="${courseFound}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).DETAILS_SECTION}" role="region" aria-labelledby="caeTitle" class="rvt-m-top-md rvt-border-top"
-             tabindex="-1">
+        <div th:if="${courseFound}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).DETAILS_SECTION}"
+             role="region" aria-labelledby="caeTitle" class="rvt-m-top-md rvt-border-top" tabindex="-1">
             <div class="rvt-flex rvt-p-top-sm">
                 <h2 id="caeTitle" class="rvt-ts-23 rvt-m-top-xxs" th:text="${pageTitle}">main section title</h2>
                 <div class="rvt-m-left-md">

@@ -36,8 +36,8 @@ public interface CourseAttributeEditorConstants {
 
     // ids of html elements to handle focus
     String SEARCH_INPUT = "searchBox";
-    String DETAILS_SECTION = "course-details";
-    String EDIT_SECTION = "course-edit";
+    String DETAILS_SECTION = "course-details-section";
+    String EDIT_SECTION = "edit-course-section";
     String SAVE_SUCCESS = "success-alert";
     String EXISTS_ERROR = "exists-error-alert";
     String CANVAS_ERROR = "canvas-error-alert";

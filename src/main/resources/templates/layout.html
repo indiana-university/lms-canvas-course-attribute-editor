@@ -73,8 +73,8 @@
                 </li>
             </ul>
         </div>
-        <div th:if="${canvasError}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" tabindex="-1"
-             data-rvt-alert="error" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).CANVAS_ERROR}">
+        <div th:if="${canvasError}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).CANVAS_ERROR}"
+             class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" tabindex="-1" data-rvt-alert="error" >
             <div class="rvt-alert__title" id="error-alert-title">Error</div>
             <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
         </div>
