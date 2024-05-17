@@ -49,11 +49,25 @@ function buttonLoading(button) {
 }
 
 jQuery(document).ready(function($) {
-    let caeFocus = $("#cae-focus").val();
-    if (caeFocus) {
-        let focusTarget = document.getElementById(caeFocus);
-        if (focusTarget) {
-            focusTarget.focus();
+
+    // handle focus
+    // first, look for an alert at the top. If there isn't an alert, look for an invalid input.
+    // Lastly, check to see if we need to focus on the course details or edit regions. These last
+    // options are passed in as a hidden input
+    let alertMsg = $(".rvt-alert");
+    let invalidInputs = $("input[aria-invalid='true']");
+
+    if (alertMsg.length > 0) {
+        alertMsg.first().focus();
+    } else if (invalidInputs.length > 0) {
+        invalidInputs.first().focus();
+    } else {
+        let caeFocus = $("#cae-focus").val();
+        if (caeFocus) {
+            let focusTarget = document.getElementById(caeFocus);
+            if (focusTarget) {
+                focusTarget.focus();
+            }
         }
     }
 });

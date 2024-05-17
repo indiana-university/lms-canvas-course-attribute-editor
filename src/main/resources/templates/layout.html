@@ -50,7 +50,7 @@
     <div class="widthLimit">
 
         <!-- alerts section -->
-        <div th:if="${updateSuccess}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SAVE_SUCCESS}"
+        <div th:if="${updateSuccess}" id="save-success"
              class="rvt-alert rvt-alert--success [ rvt-m-top-sm ]" role="alert" aria-labelledby="success-alert-title" data-rvt-alert="success" tabindex="-1">
             <div class="rvt-alert__title" id="success-alert-title">Success</div>
             <p class="rvt-alert__message" th:text="|Course with Canvas Course ID ${course.id} was saved.|">Course saved.</p>
@@ -62,9 +62,8 @@
             </button>
         </div>
 
-        <div th:if="${alreadyInUseList} and not ${alreadyInUseList.isEmpty()}" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]"
-             role="alert" aria-labelledby="existing-id-error-title" data-rvt-alert="error" tabindex="-1"
-             th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).EXISTS_ERROR}">
+        <div th:if="${alreadyInUseList} and not ${alreadyInUseList.isEmpty()}" id="existing-error" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]"
+             role="alert" aria-labelledby="existing-id-error-title" data-rvt-alert="error" tabindex="-1">
             <div class="rvt-alert__title" id="existing-id-error-title">Error</div>
             <ul class="rvt-list-plain">
                 <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
@@ -73,8 +72,8 @@
                 </li>
             </ul>
         </div>
-        <div th:if="${canvasError}" th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).CANVAS_ERROR}"
-             class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert" aria-labelledby="error-alert-title" tabindex="-1" data-rvt-alert="error" >
+        <div th:if="${canvasError}" id="canvas-error" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert"
+             aria-labelledby="error-alert-title" tabindex="-1" data-rvt-alert="error" >
             <div class="rvt-alert__title" id="error-alert-title">Error</div>
             <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
         </div>
@@ -83,12 +82,12 @@
 
         <div role="region" aria-label="Find Course by Canvas Course ID">
             <form th:action="@{|/app/find|}" method="post">
-                <label th:for="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SEARCH_INPUT}" class="rvt-label rvt-ts-16">Canvas Course ID</label>
+                <label for="searchBox" class="rvt-label rvt-ts-16">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
                         <div class="rvt-input-group">
                             <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" name="searchBox" th:value="${searchBox}"
-                                   th:id="${T(edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants).SEARCH_INPUT}"
+                                   id="searchBox"
                                    th:classappend="${invalidSearch} ? 'rvt-validation-danger'"
                                    th:aria-describedby="${invalidSearch} ? invalid-search-msg"
                                    th:aria-invalid="${invalidSearch} ? true"

@@ -102,7 +102,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       if (searchBox == null || searchBox.isEmpty()) {
          model.addAttribute("invalidSearch", true);
          model.addAttribute("invalidSearchMsg", "Canvas Course ID is required.");
-         model.addAttribute("caeFocus", CourseAttributeEditorConstants.SEARCH_INPUT);
          return new ModelAndView("index");
       }
 
@@ -144,11 +143,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          model.addAttribute("pageTitle", "Canvas Course not found");
          model.addAttribute("invalidSearch", true);
          model.addAttribute("invalidSearchMsg", "Canvas Course ID \"" + searchBox + "\" does not exist.");
-         model.addAttribute("caeFocus", CourseAttributeEditorConstants.SEARCH_INPUT);
-      }
-
-      if (model.containsAttribute("updateSuccess")) {
-         model.addAttribute("caeFocus", CourseAttributeEditorConstants.SAVE_SUCCESS);
       }
 
       return new ModelAndView("index");
@@ -231,14 +225,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       model.addAttribute("course", course);
       model.addAttribute("sections", sections);
 
-      String caeFocus = CourseAttributeEditorConstants.EDIT_SECTION;
-      if (model.containsAttribute("alreadyInUseList")) {
-         caeFocus = CourseAttributeEditorConstants.EXISTS_ERROR;
-      } else if (model.containsAttribute("canvasError")) {
-         caeFocus = CourseAttributeEditorConstants.CANVAS_ERROR;
-      }
-
-      model.addAttribute("caeFocus", caeFocus);
+      model.addAttribute("caeFocus", CourseAttributeEditorConstants.EDIT_SECTION);
 
       return new ModelAndView("edit");
    }
