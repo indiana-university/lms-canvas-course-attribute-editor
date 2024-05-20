@@ -42,6 +42,7 @@ import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.config.LtiClientTestConfig;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.controller.CourseAttributeEditorToolController;
+import edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants;
 import edu.iu.uits.lms.lti.config.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

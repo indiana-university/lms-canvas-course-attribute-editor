@@ -38,6 +38,7 @@ import edu.iu.uits.lms.canvas.model.CourseSectionUpdateWrapper;
 import edu.iu.uits.lms.canvas.model.Section;
 import edu.iu.uits.lms.canvas.services.CourseService;
 import edu.iu.uits.lms.canvas.services.SectionService;
+import edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.model.CourseAttributeAuditLog;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
@@ -89,8 +90,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       log.debug("in /index");
       getTokenWithoutContext();
 
-      model.addAttribute("breadcrumb", false);
-
       return new ModelAndView("index");
    }
 
@@ -101,12 +100,11 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
       getTokenWithoutContext();
 
       if (searchBox == null || searchBox.isEmpty()) {
-         model.addAttribute("blankSearch", true);
+         model.addAttribute("invalidSearch", true);
+         model.addAttribute("invalidSearchMsg", "Canvas Course ID is required.");
          return new ModelAndView("index");
       }
 
-      model.addAttribute("breadcrumb", true);
-      model.addAttribute("tier2breadcrumb", true);
       model.addAttribute("searchBox", searchBox);
 
       // code to lookup search criteria
@@ -120,6 +118,7 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          // boo-urns that this is a separate call and not included in courseService.getCourse(searchBox);
          List<Section> sections = courseService.getCourseSections(searchBox);
          model.addAttribute("sections", sections);
+         model.addAttribute("caeFocus", CourseAttributeEditorConstants.DETAILS_SECTION);
 
          if (course.getSisCourseId() != null) {
             // check Sis to see if this is a legit course
@@ -142,7 +141,8 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          }
       } else {
          model.addAttribute("pageTitle", "Canvas Course not found");
-         model.addAttribute("displayNotFound", true);
+         model.addAttribute("invalidSearch", true);
+         model.addAttribute("invalidSearchMsg", "Canvas Course ID \"" + searchBox + "\" does not exist.");
       }
 
       return new ModelAndView("index");
@@ -182,8 +182,6 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          return find(model, request, editId);
       }
 
-      model.addAttribute("breadcrumb", true);
-      model.addAttribute("tier3breadcrumb", true);
       model.addAttribute("searchBox", editId);
       model.addAttribute("pageTitle", "Edit Course");
 
@@ -223,15 +221,11 @@ public class CourseAttributeEditorToolController extends OidcTokenAwareControlle
          sections.add(sectionWithSISCheck);
       }
 
-      // if this variable doesn't exist, add it in so the page doesn't explode
-      if (!model.containsAttribute("alreadyInUseList")) {
-         List<String> alreadyInUseList = new ArrayList<>();
-         model.addAttribute("alreadyInUseList", alreadyInUseList);
-      }
-
       // add course and section info to model
       model.addAttribute("course", course);
       model.addAttribute("sections", sections);
+
+      model.addAttribute("caeFocus", CourseAttributeEditorConstants.EDIT_SECTION);
 
       return new ModelAndView("edit");
    }

@@ -1,3 +1,5 @@
+package edu.iu.uits.lms.courseattributeeditor;
+
 /*-
  * #%L
  * course-attribute-editor
@@ -6,18 +8,18 @@
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the Indiana University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software without
  *    specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -30,20 +32,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * #L%
  */
-.widthLimit {
-    width: max-content;
-    min-width: 35%;
-}
+public interface CourseAttributeEditorConstants {
 
-.rowHeader {
-    font-weight: 700;
-    background-color: #f7f7f7;
-}
-
-.errorAlignment {
-    vertical-align: top;
-}
-
-#course-details-section:focus, #edit-course-section:focus, .rvt-alert:focus {
-    outline: none;
+    // ids of html elements to handle focus
+    String DETAILS_SECTION = "course-details-section";
+    String EDIT_SECTION = "edit-course-section";
 }

@@ -46,28 +46,64 @@
 </head>
 <body>
 
-<div id="main-container" class="rvt-container-xl" aria-labelledby="caeTitle">
+<main id="main-container" class="rvt-container-xl" aria-labelledby="page-title">
     <div class="widthLimit">
-        <!-- banner -->
-        <header role="banner">
+
+        <!-- alerts section -->
+        <div th:if="${updateSuccess}" id="save-success"
+             class="rvt-alert rvt-alert--success [ rvt-m-top-sm ]" role="alert" aria-labelledby="success-alert-title" data-rvt-alert="success" tabindex="-1">
+            <div class="rvt-alert__title" id="success-alert-title">Success</div>
+            <p class="rvt-alert__message" th:text="|Course with Canvas Course ID ${course.id} was saved.|">Course saved.</p>
+            <button type="button" class="rvt-alert__dismiss" data-rvt-alert-close>
+                <span class="rvt-sr-only">Close</span>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path fill="currentColor" d="M9.41,8l5.29-5.29a1,1,0,0,0-1.41-1.41L8,6.59,2.71,1.29A1,1,0,0,0,1.29,2.71L6.59,8,1.29,13.29a1,1,0,1,0,1.41,1.41L8,9.41l5.29,5.29a1,1,0,0,0,1.41-1.41Z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div th:if="${alreadyInUseList} and not ${alreadyInUseList.isEmpty()}" id="existing-error" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]"
+             role="alert" aria-labelledby="existing-id-error-title" data-rvt-alert="error" tabindex="-1">
+            <div class="rvt-alert__title" id="existing-id-error-title">Error</div>
+            <ul class="rvt-list-plain">
+                <li th:each="error : ${alreadyInUseList}" class="rvt-alert__message">
+                    <a th:if="${error == 'course-sis-id'}" href="#course-sis-id">The <strong>Course SIS ID</strong> is already in use in Canvas.</a>
+                    <a th:if="${error != 'course-sis-id'}" th:href="@{|#${error}|}">The <strong>Section SIS ID</strong> is already in use in Canvas.</a>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${canvasError}" id="canvas-error" class="rvt-alert rvt-alert--danger [ rvt-m-top-sm ]" role="alert"
+             aria-labelledby="error-alert-title" tabindex="-1" data-rvt-alert="error" >
+            <div class="rvt-alert__title" id="error-alert-title">Error</div>
+            <p class="rvt-alert__message">Could not fully save course. Please try again.</p>
+        </div>
+
+        <h1 id="page-title" class="rvt-p-tb-sm rvt-ts-26">Course Attribute Editor</h1>
+
+        <div role="region" aria-label="Find Course by Canvas Course ID">
             <form th:action="@{|/app/find|}" method="post">
-                <div class="rvt-p-tb-sm"><span class="rvt-ts-26">Course Attribute Editor</span></div>
-                <label for="searchBox" class="rvt-label rvt-sr-only">Canvas Course ID</label>
+                <label for="searchBox" class="rvt-label rvt-ts-16">Canvas Course ID</label>
                 <div class="rvt-flex">
                     <div class="rvt-m-right-sm">
                         <div class="rvt-input-group">
-                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" id="searchBox" name="searchBox" th:value="${searchBox}"
-                                   th:classappend="${blankSearch} ? 'rvt-validation-danger'"
-                                   th:aria-describedby="${blankSearch} ? 'blank-search-message'"
-                                   th:aria-invalid="${blankSearch} ? true" />
+                            <input class="rvt-text-input rvt-input-group__input rvt-width-sm" type="text" name="searchBox" th:value="${searchBox}"
+                                   id="searchBox"
+                                   th:classappend="${invalidSearch} ? 'rvt-validation-danger'"
+                                   th:aria-describedby="${invalidSearch} ? invalid-search-msg"
+                                   th:aria-invalid="${invalidSearch} ? true"
+                                   th:required="required" />
+
                             <div class="rvt-input-group__append">
                                 <button class="rvt-button" onclick="buttonLoading(this)">
                                     <span class="rvt-button__content">Find</span>
-                                    <div class="rvt-loader rvt-loader--xs rvt-display-none" aria-label="Content loading"></div>
+                                    <span class="rvt-loader rvt-loader--xs rvt-display-none"></span>
+                                    <span aria-live="polite">
+                                        <span class="loader-sr-text rvt-sr-only rvt-display-none">Loading course details</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
-                        <div class="rvt-inline-alert rvt-inline-alert--danger" th:if="${blankSearch}">
+                        <div class="rvt-inline-alert rvt-inline-alert--danger rvt-p-top-xs" th:if="${invalidSearch}">
                             <span class="rvt-inline-alert__icon">
                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                                     <g fill="currentColor">
@@ -76,29 +112,21 @@
                                     </g>
                                 </svg>
                             </span>
-                            <span class="rvt-inline-alert__message" id="blank-search-message">
-                                Please enter a Canvas Course ID before clicking Find.
+                            <span class="rvt-inline-alert__message" id="invalid-search-msg" th:text="${invalidSearchMsg}">
+                                Canvas Course ID is required.
                             </span>
                         </div>
                     </div>
                 </div>
             </form>
-        </header>
-        <!-- breadcrumb -->
-        <div class="rvt-p-bottom-md rvt-border-bottom" th:if="${breadcrumb}"></div>
-        <nav role="navigation" aria-label="Breadcrumbs" th:if="${breadcrumb}">
-            <ol class="rvt-breadcrumbs rvt-p-top-md">
-                <li><a th:href="@{|/app/index|}">Course Attribute Editor</a></li>
-                <li th:if="${tier2breadcrumb}" aria-current="page" th:text="${pageTitle}">Canvas Course ID: 123456</li>
-                <li th:if="${tier3breadcrumb}"><a th:href="@{|/app/find/${searchBox}|}" th:text="@{|Canvas Course ID: ${searchBox}|}">Canvas Course ID: 123456</a></li>
-                <li th:if="${tier3breadcrumb}" aria-current="page" th:text="${pageTitle}">Edit Course</li>
-            </ol>
-        </nav>
+        </div>
+
+        <input type="hidden" id="cae-focus" th:value="${caeFocus}" />
 
         <div layout:fragment="content">
         </div>
     </div>
-</div>
+</main>
 
 <footer th:unless="${hideFooter}" class="rvt-ts-12 rvt-container-xl rvt-m-top-lg">
     <div id="footer" th:text="${@serverInfo}"></div>
