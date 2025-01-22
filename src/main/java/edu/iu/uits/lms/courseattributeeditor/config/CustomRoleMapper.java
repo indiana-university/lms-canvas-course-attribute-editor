@@ -33,8 +33,8 @@ package edu.iu.uits.lms.courseattributeeditor.config;
  * #L%
  */
 
-import edu.iu.uits.lms.iuonly.model.DeptProvisioningUser;
-import edu.iu.uits.lms.iuonly.services.DeptProvisioningUserServiceImpl;
+import edu.iu.uits.lms.iuonly.model.acl.AuthorizedUser;
+import edu.iu.uits.lms.iuonly.services.AuthorizedUserService;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.repository.DefaultInstructorRoleRepository;
 import edu.iu.uits.lms.lti.service.LmsDefaultGrantedAuthoritiesMapper;
@@ -48,14 +48,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static edu.iu.uits.lms.courseattributeeditor.CourseAttributeEditorConstants.AUTH_USER_TOOL_PERMISSION;
+
 @Slf4j
 public class CustomRoleMapper extends LmsDefaultGrantedAuthoritiesMapper {
     @Autowired
-    private DeptProvisioningUserServiceImpl deptProvisioningUserService;
+    private AuthorizedUserService authorizedUserService;
 
-    public CustomRoleMapper(DefaultInstructorRoleRepository defaultInstructorRoleRepository, DeptProvisioningUserServiceImpl deptProvisioningUserService) {
+    public CustomRoleMapper(DefaultInstructorRoleRepository defaultInstructorRoleRepository, AuthorizedUserService authorizedUserService) {
         super(defaultInstructorRoleRepository);
-        this.deptProvisioningUserService = deptProvisioningUserService;
+        this.authorizedUserService = authorizedUserService;
     }
 
     @Override
@@ -73,7 +75,7 @@ public class CustomRoleMapper extends LmsDefaultGrantedAuthoritiesMapper {
 
             ArrayList<String> roles = new ArrayList<>();
 
-            DeptProvisioningUser user = deptProvisioningUserService.findByUsername(userId);
+            AuthorizedUser user = authorizedUserService.findByUsernameAndToolPermission(userId, AUTH_USER_TOOL_PERMISSION);
 
             if (user != null) {
                 rolesString = LTIConstants.CANVAS_INSTRUCTOR_ROLE;
