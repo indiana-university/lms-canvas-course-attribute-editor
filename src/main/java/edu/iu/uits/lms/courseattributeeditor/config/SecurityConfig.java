@@ -34,7 +34,7 @@ package edu.iu.uits.lms.courseattributeeditor.config;
  */
 
 import edu.iu.uits.lms.common.it12logging.LmsFilterSecurityInterceptorObjectPostProcessor;
-import edu.iu.uits.lms.iuonly.services.DeptProvisioningUserServiceImpl;
+import edu.iu.uits.lms.iuonly.services.AuthorizedUserService;
 import edu.iu.uits.lms.lti.repository.DefaultInstructorRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -81,7 +81,7 @@ public class SecurityConfig {
     private DefaultInstructorRoleRepository defaultInstructorRoleRepository;
 
     @Autowired
-    private DeptProvisioningUserServiceImpl deptProvisioningUserService;
+    private AuthorizedUserService authorizedUserService;
 
     @Bean
     @Order(7)
@@ -89,7 +89,7 @@ public class SecurityConfig {
         //Set up the LTI handshake
         http.with(new Lti13Configurer(), lti ->
                 lti.setSecurityContextRepository(new HttpSessionSecurityContextRepository())
-                        .grantedAuthoritiesMapper(new CustomRoleMapper(defaultInstructorRoleRepository, deptProvisioningUserService)));
+                        .grantedAuthoritiesMapper(new CustomRoleMapper(defaultInstructorRoleRepository, authorizedUserService)));
 
         http.securityMatcher("/**")
                 .authorizeHttpRequests((authz) -> authz.anyRequest().authenticated()

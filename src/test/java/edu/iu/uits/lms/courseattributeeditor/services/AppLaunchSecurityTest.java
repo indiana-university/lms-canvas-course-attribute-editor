@@ -40,7 +40,7 @@ import edu.iu.uits.lms.courseattributeeditor.config.SecurityConfig;
 import edu.iu.uits.lms.courseattributeeditor.config.ToolConfig;
 import edu.iu.uits.lms.courseattributeeditor.controller.CourseAttributeEditorToolController;
 import edu.iu.uits.lms.courseattributeeditor.repository.CourseAttributeAuditLogRepository;
-import edu.iu.uits.lms.iuonly.services.DeptProvisioningUserServiceImpl;
+import edu.iu.uits.lms.iuonly.services.AuthorizedUserService;
 import edu.iu.uits.lms.iuonly.services.SisServiceImpl;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.config.TestUtils;
@@ -68,7 +68,7 @@ public class AppLaunchSecurityTest {
    private MockMvc mvc;
 
    @MockBean
-   private DeptProvisioningUserServiceImpl deptProvisioningUserService;
+   private AuthorizedUserService authorizedUserService;
 
    @MockBean
    private CourseAttributeAuditLogRepository courseAttributeAuditLogRepository;

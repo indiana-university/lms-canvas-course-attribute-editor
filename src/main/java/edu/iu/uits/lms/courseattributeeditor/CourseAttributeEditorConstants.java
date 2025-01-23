@@ -37,4 +37,6 @@ public interface CourseAttributeEditorConstants {
     // ids of html elements to handle focus
     String DETAILS_SECTION = "course-details-section";
     String EDIT_SECTION = "edit-course-section";
+
+    String AUTH_USER_TOOL_PERMISSION = "COURSE_ATTR_EDIT";
 }
