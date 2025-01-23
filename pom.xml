@@ -9,11 +9,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.2.12</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <version>5.0.4-SNAPSHOT</version>
+    <version>6.0.0-SNAPSHOT</version>
     <description>This tool allows administrators to view the identity attributes (including the SIS IDs) of any Canvas course and to edit the attributes of non-SIS courses and sections.</description>
     <url>https://github.com/indiana-university/lms-canvas-course-attribute-editor</url>
     <inceptionYear>2023</inceptionYear>
@@ -54,27 +54,24 @@
 
     <properties>
         <app.version>${project.version}</app.version>
-        <commons-io.version>2.16.0</commons-io.version>
-        <denodo-hibernate-dialect.version>8.0.20201021</denodo-hibernate-dialect.version>
-        <denodo-jdbc.version>8.0.2</denodo-jdbc.version>
-        <git-commit-id-maven-plugin.version>7.0.0</git-commit-id-maven-plugin.version>
-        <hibernate5-ddl-maven-plugin.version>2.5.0</hibernate5-ddl-maven-plugin.version>
-        <java.version>17</java.version>
-        <jdk.source>17</jdk.source>
-        <jdk.target>17</jdk.target>
+        <commons-io.version>2.18.0</commons-io.version>
+        <denodo-hibernate-dialect.version>9.0.20240513</denodo-hibernate-dialect.version>
+        <denodo-jdbc.version>9.1.0</denodo-jdbc.version>
+        <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
+        <hibernate6-ddl-maven-plugin.version>1.0.2</hibernate6-ddl-maven-plugin.version>
+        <java.version>21</java.version>
+        <jdk.source>21</jdk.source>
+        <jdk.target>21</jdk.target>
         <jquery.version>3.7.1</jquery.version>
-        <lms-canvas-rivet.version>5.2.6.0</lms-canvas-rivet.version>
-        <lms-embedded-services.version>5.2.33</lms-embedded-services.version>
-        <lms-team-spring-boot-it12>5.4.7</lms-team-spring-boot-it12>
-        <nodejs.version>v14.21.2</nodejs.version>
-        <npm.version>6.14.17</npm.version>
-        <spring-cloud.version>2021.0.9</spring-cloud.version>
+        <lms-canvas-rivet.version>6.2.8.1_1</lms-canvas-rivet.version>
+        <lms-embedded-services.version>6.1.1</lms-embedded-services.version>
+        <lms-team-spring-boot-it12>6.5.0</lms-team-spring-boot-it12>
+        <spring-cloud.version>2023.0.5</spring-cloud.version>
         <webjars-locator.version>0.52</webjars-locator.version>
 
-        <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
-        <plugins.compiler.version>3.11.0</plugins.compiler.version>
-        <plugins.license.version>2.3.0</plugins.license.version>
-        <plugins.release.version>3.0.1</plugins.release.version>
+        <plugins.compiler.version>3.13.0</plugins.compiler.version>
+        <plugins.license.version>2.5.0</plugins.license.version>
+        <plugins.release.version>3.1.1</plugins.release.version>
     </properties>
 
     <dependencyManagement>
@@ -114,10 +111,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
         </dependency>
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
@@ -174,9 +167,8 @@
             <version>${lms-canvas-rivet.version}</version>
         </dependency>
         <dependency>
-            <groupId>edu.iu.uits.lms</groupId>
-            <artifactId>lms-canvas-redis-config</artifactId>
-            <version>${lms-embedded-services.version}</version>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -212,6 +204,11 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>${jquery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -257,8 +254,8 @@
             </plugin>
             <plugin>
                 <groupId>de.jpdigital</groupId>
-                <artifactId>hibernate54-ddl-maven-plugin</artifactId>
-                <version>${hibernate5-ddl-maven-plugin.version}</version>
+                <artifactId>hibernate65-ddl-maven-plugin</artifactId>
+                <version>${hibernate6-ddl-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -270,7 +267,7 @@
                 <configuration>
                     <dialects>
                         <param>h2</param>
-                        <param>postgresql9</param>
+                        <param>postgresql</param>
                     </dialects>
                     <packages>
                         <param>edu.iu.uits.lms.courseattributeeditor</param>
