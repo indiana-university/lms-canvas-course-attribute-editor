@@ -4,7 +4,7 @@ package edu.iu.uits.lms.courseattributeeditor.model;
  * #%L
  * course-attribute-editor
  * %%
- * Copyright (C) 2023 Indiana University
+ * Copyright (C) 2023 - 2026 Indiana University
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:

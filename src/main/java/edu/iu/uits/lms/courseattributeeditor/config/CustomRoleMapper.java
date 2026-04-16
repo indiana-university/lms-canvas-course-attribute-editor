@@ -4,7 +4,7 @@ package edu.iu.uits.lms.courseattributeeditor.config;
  * #%L
  * course-attribute-editor
  * %%
- * Copyright (C) 2023 Indiana University
+ * Copyright (C) 2023 - 2026 Indiana University
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -33,7 +33,6 @@ package edu.iu.uits.lms.courseattributeeditor.config;
  * #L%
  */
 
-import edu.iu.uits.lms.iuonly.model.acl.AuthorizedUser;
 import edu.iu.uits.lms.iuonly.services.AuthorizedUserService;
 import edu.iu.uits.lms.lti.LTIConstants;
 import edu.iu.uits.lms.lti.repository.DefaultInstructorRoleRepository;
@@ -75,9 +74,7 @@ public class CustomRoleMapper extends LmsDefaultGrantedAuthoritiesMapper {
 
             ArrayList<String> roles = new ArrayList<>();
 
-            AuthorizedUser user = authorizedUserService.findByActiveUsernameAndToolPermission(userId, AUTH_USER_TOOL_PERMISSION);
-
-            if (user != null) {
+            if (authorizedUserService.isAuthorized(userId, AUTH_USER_TOOL_PERMISSION)) {
                 rolesString = LTIConstants.CANVAS_INSTRUCTOR_ROLE;
             }
 
