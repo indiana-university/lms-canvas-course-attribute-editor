@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
@@ -50,7 +50,16 @@ import static edu.iu.uits.lms.lti.LTIConstants.BASE_USER_AUTHORITY;
 import static edu.iu.uits.lms.lti.LTIConstants.WELL_KNOWN_ALL;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    @Order(5)
+    @Bean
+    public SecurityFilterChain staticResourcesFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/app/jsrivet/**", "/app/webjars/**", "/app/css/**", "/app/js/**", "/favicon.ico")
+                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
+        return http.build();
+    }
 
     @Bean
     @Order(6)
@@ -66,13 +75,6 @@ public class SecurityConfig {
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN))
                 );
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        // ignore everything except paths specified
-        return web -> web.ignoring().requestMatchers("/app/jsrivet/**", "/app/webjars/**", "/app/css/**",
-                "/app/js/**", "/favicon.ico");
     }
 
     @Autowired
