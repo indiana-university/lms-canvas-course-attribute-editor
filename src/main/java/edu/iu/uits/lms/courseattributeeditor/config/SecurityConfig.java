@@ -53,20 +53,14 @@ import static edu.iu.uits.lms.lti.LTIConstants.WELL_KNOWN_ALL;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Order(5)
-    @Bean
-    public SecurityFilterChain staticResourcesFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/app/jsrivet/**", "/app/webjars/**", "/app/css/**", "/app/js/**", "/favicon.ico")
-                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
-        return http.build();
-    }
-
     @Bean
     @Order(6)
     public SecurityFilterChain appFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(WELL_KNOWN_ALL, "/error", "/app/**")
+        http.securityMatcher(WELL_KNOWN_ALL, "/error", "/app/**", "/favicon.ico")
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(WELL_KNOWN_ALL, "/error").permitAll()
+                        .requestMatchers("/app/jsrivet/**", "/app/webjars/**", "/app/css/**",
+                                "/app/js/**", "/favicon.ico").permitAll()
                         .requestMatchers("/**").hasAuthority(BASE_USER_AUTHORITY)
                 )
                 .headers(headers -> headers
